@@ -39,6 +39,45 @@ h1:focus {
 
 canvas{
     background-color: yellow;
-    border:5px solid black;
+}
+
+.container{
+    display: flex;
+    background-color: yellow;
+    gap:100px;
     
+}
+
+.main-div {
+    background-color: red;
+    font-size: 20px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+}
+
+#canvas-div {
+    background-color:green;
+    width:80%;
+    height:100%;
+    display:flex;
+    flex-direction:column;
+    font-size:20px;
+    padding:0px;
+    margin:0px;
+}
+
+#hotbar{
+    background-color:purple;
+    display:flex;
+    flex-direction:row;
+    padding:8px;
+}
+
+-- items inside the hotbar
+.hotbar_button
+{
+    color:red;
 }
