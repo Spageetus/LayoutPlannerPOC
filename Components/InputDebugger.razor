@@ -1,0 +1,16 @@
+﻿@rendermode InteractiveServer
+<h3>InputDebugger</h3>
+
+<h1>@KeyPressed keypressed</h1>
+<h1>@EventInfo eventinfo</h1>
+
+@code {
+    public string KeyPressed = "";
+    public string EventInfo = "";
+
+    public async void KeyboardEventHandler(KeyboardEventArgs args)
+    {
+        KeyPressed = "Key Pressed is " + args.Key;
+        EventInfo = "Event Type " + args.Type;
+    }
+}

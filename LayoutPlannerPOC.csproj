@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
+    <PackageReference Include="Excubo.Blazor.Canvas" Version="3.2.96" />
   </ItemGroup>
 
 </Project>
