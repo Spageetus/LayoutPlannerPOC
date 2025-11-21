@@ -1,0 +1,92 @@
+﻿<canvas id="design-canvas" width="950" height="400">I am the main canvas</canvas>
+
+<script>
+    const canvas = document.getElementById("design-canvas");
+    const ctx = canvas.getContext("2d");
+    const defaultCellSize = 80;
+    let currentZoom = 100;
+    const minZoom = 20;
+    const maxZoom = 200;
+    let width = canvas.width;
+    let height = canvas.height;
+
+
+    drawGrid();
+
+    function drawGrid()
+    {
+        
+        let cellSize = defaultCellSize * currentZoom / 100;
+        let columns = width / cellSize;
+        let rows = height/cellSize;
+        let currX = 0;
+        let currY = 0;
+
+        ctx.lineWidth = 2;
+        if(currentZoom <= 25) ctx.lineWidth = 1;
+        
+        ctx.beginPath();
+        //draw vertical lines
+        for(let i = 0; i < columns; i++)
+        {
+            currX += cellSize;
+            currY = 0;
+            ctx.moveTo(currX, currY);
+            ctx.lineTo(currX, height);
+            //if(i >= 2) break;
+            
+        }
+        ctx.stroke();
+        currX = 0;
+        currY = 0;
+        //draw horizontal lines
+        for(let i = 0; i < rows; i++)
+        {
+            currY += cellSize;
+            currX = 0;
+            ctx.moveTo(currX, currY);
+            ctx.lineTo(width, currY);
+            //if(i >=2) break;
+        }
+        ctx.stroke();
+       
+        ctx.closePath();
+    }
+
+    function clearCanvas()
+    {
+        ctx.clearRect(0, 0, width, height);
+    }
+
+    function zoomOut()
+    {
+
+        console.log("Zooming Out...");
+        
+        //clear canvas
+        clearCanvas();
+        
+        currentZoom *= 0.9;
+        currentZoom = Math.round(currentZoom);
+        if(currentZoom < minZoom) currentZoom = minZoom;
+        console.log("Current Zoom: " + currentZoom);
+        
+        drawGrid();
+    }
+
+    function zoomIn()
+    {
+        console.log("Zooming In...");
+       
+        //clear canvas
+        clearCanvas();
+
+        currentZoom *= 1.1;
+        if(currentZoom > maxZoom) currentZoom = maxZoom;
+        currentZoom = Math.round(currentZoom);
+        console.log("Current Zoom: " + currentZoom);
+        drawGrid();
+        
+    }
+
+</script>

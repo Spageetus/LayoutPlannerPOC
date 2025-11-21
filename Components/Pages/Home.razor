@@ -2,7 +2,8 @@
 <PageTitle>Home</PageTitle>
 <div id="main-div">
     <section id="activity-section">
-        <canvas id="design-canvas" >I am the main canvas</canvas>
+        <DesignCanvas></DesignCanvas>
+        
         <section id="toolbar">
             <button class="hotbar-button">
                 1
@@ -36,7 +37,29 @@
             </button>
         </section>
     </section>
-    <aside id="components">
+    <aside id="components" width="200">
         <div>components go here</div>
     </aside>
 </div>
+
+
+
+<script>
+
+
+    window.addEventListener("keypress", function(event)
+    {
+        console.log(event.key);
+
+        if(event.key == '-') zoomOut();
+        if(event.key == '+' || event.key == '=') zoomIn();
+        if(event.key == 'q') clearCanvas();
+    });
+
+    window.addEventListener("wheel", function(event)
+    {
+
+        if(event.deltaY < 0) zoomIn(); //zoom in for scrolling down
+        if(event.deltaY > 0) zoomOut(); //zoom out for scrolling up
+    })
+</script>
