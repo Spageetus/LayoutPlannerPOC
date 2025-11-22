@@ -55,7 +55,7 @@
         ctx.lineWidth = 2;
         ctx.fillStyle = "black";
         ctx.beginPath();
-
+        //draw 
         //TODO: Increase width of every 8th grid line (size of foundations)
         for(let i = 0; i < columns; i++)
         {
@@ -74,12 +74,15 @@
             currX = 0;
             ctx.moveTo(currX, currY);
             ctx.lineTo(relWidth, currY);
+            ctx.lineTo(relWidth, currY);
         }
         ctx.stroke();
        
         ctx.closePath();
 
         drawComponents();
+
+        console.log(ctx.getTransform());
     }
     
     function drawComponents()
@@ -99,7 +102,8 @@
 
     function clearCanvas()
     {
-        ctx.clearRect(-offsetX, 0, relWidth, relHeight);
+        ctx.clearRect(-offsetX / currentZoom, 0, relWidth, relHeight);
+        ctx.fillRect(-offsetX / currentZoom, 0, 10, relHeight);
     }
 
     function zoomOut()
@@ -110,10 +114,9 @@
         //clearCanvas();
         currentZoom *= 0.9;
         currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
-        offsetX = Math.round(offsetX * currentZoom);
         if(currentZoom < minZoom) currentZoom = minZoom;
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, offsetX, 0);
-        console.log("Offset X:" + offsetX);
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, 0);
+        offsetX = ctx.getTransform().e;
         drawGrid();
     }
 
@@ -121,40 +124,34 @@
     {
         console.log("Zooming In...");
        
-        //clear canvas
-        //clearCanvas();
+       
 
         currentZoom *= 1.1;
         currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
-
-        offsetX = Math.round(offsetX * currentZoom);
+        
         if(currentZoom > maxZoom) currentZoom = maxZoom;
-
-
-        console.log("Offset X:" + offsetX);
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, offsetX, 0);
+        
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, 0);
+        offsetX = ctx.getTransform().e;
         drawGrid();
         
     }
 
+
     function panLeft()
     {
         console.log("Panning Left");
-        offsetX -= relWidth * panDistance * currentZoom; //shifts everything right by 1%
-        offsetX = Math.round(offsetX);
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, offsetX, 0);
-
-        console.log("Offset X: " + offsetX);
-
+        ctx.translate(-relWidth*panDistance, 0);
+        offsetX = ctx.getTransform().e;
         drawGrid();
     }
 
+    
+
     function panRight(){
         console.log("Panning Right");
-
-        offsetX += relWidth * panDistance * currentZoom; //shifts everything right by 1%
-        offsetX = Math.round(offsetX);
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, offsetX, 0);
+        ctx.translate(+relWidth*panDistance, 0);
+        offsetX = ctx.getTransform().e;
 
         console.log("Offset X: " + offsetX);
 
