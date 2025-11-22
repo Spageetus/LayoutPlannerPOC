@@ -4,12 +4,15 @@
     const canvas = document.getElementById("design-canvas");
     const ctx = canvas.getContext("2d");
     const defaultCellSize = 80;
-    let currentZoom = 100;
-    const minZoom = 20;
-    const maxZoom = 200;
-    let cellSize = defaultCellSize * currentZoom/100;
+    let currentZoom = 1;
+    const minZoom = 0.2;
+    const maxZoom = 2;
+    let cellSize = defaultCellSize * currentZoom;
     let width = canvas.width;
     let height = canvas.height;
+
+    let relWidth = width * currentZoom;
+    let relHeight = height * currentZoom;
 
     let components = [];
 
@@ -34,31 +37,26 @@
 
     function drawGrid()
     {
-        cellSize = defaultCellSize * currentZoom/100;
-        
+        cellSize = Math.round(defaultCellSize * currentZoom);
+        relWidth = Math.round(width / currentZoom);
+        relHeight = Math.round(height / currentZoom);
         let currX = 0;
         let currY = 0;
-        let columns = (width) / cellSize;
-        let rows = (height)/cellSize;
+        let columns = Math.round(relWidth / cellSize) + 1;
+        let rows = Math.round(relHeight /cellSize) + 1;
         
-
-        console.log("Cell Size: " + cellSize);
-
 
         ctx.lineWidth = 2;
         ctx.fillStyle = "black";
-        if(currentZoom <= 25) ctx.lineWidth = 1;
-
-        console.log("Current X: " + currX);
-        console.log("Current Y: " + currY);
         ctx.beginPath();
+
+        //TODO: Increase width of every 8th grid line (size of foundations)
         for(let i = 0; i < columns; i++)
         {
             currX += cellSize;
             currY = 0;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, height);
-            
+            ctx.lineTo(currX, relHeight);
         }
         ctx.stroke();
         currX = 0;
@@ -69,7 +67,7 @@
             currY += cellSize;
             currX = 0;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(width, currY);
+            ctx.lineTo(relWidth, currY);
         }
         ctx.stroke();
        
@@ -80,8 +78,6 @@
     
     function drawComponents()
     {
-        console.log("Running drawComponents");
-        console.log("Num components: " + components.length);
         ctx.fillStyle = "red";
 
         for(let i = 0; i < components.length; i++)
@@ -97,22 +93,19 @@
 
     function clearCanvas()
     {
-        ctx.clearRect(0, 0, width, height);
+        ctx.clearRect(0, 0, relWidth, relHeight);
     }
 
     function zoomOut()
     {
-
         console.log("Zooming Out...");
         
         //clear canvas
         clearCanvas();
-        
         currentZoom *= 0.9;
-        currentZoom = Math.round(currentZoom);
+        currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
         if(currentZoom < minZoom) currentZoom = minZoom;
-        console.log("Current Zoom: " + currentZoom);
-        
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, 0, 0);
         drawGrid();
     }
 
@@ -124,9 +117,10 @@
         clearCanvas();
 
         currentZoom *= 1.1;
+        currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
         if(currentZoom > maxZoom) currentZoom = maxZoom;
-        currentZoom = Math.round(currentZoom);
-        console.log("Current Zoom: " + currentZoom);
+
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, 0, 0);
         drawGrid();
         
     }
