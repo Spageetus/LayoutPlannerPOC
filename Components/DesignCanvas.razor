@@ -4,27 +4,61 @@
     const canvas = document.getElementById("design-canvas");
     const ctx = canvas.getContext("2d");
     const defaultCellSize = 80;
-    let currentZoom = 100;
     const minZoom = 20;
     const maxZoom = 200;
+    let currentZoom = 100;
+    let cellSize = defaultCellSize * currentZoom/100;
     let width = canvas.width;
     let height = canvas.height;
+    let offsetX = -20;
+    let offsetY = -20;
+    ctx.scale(1/2, 1/2);
 
+    let components = [];
 
+    let obj = {
+        row: 2,
+        col: 1,
+        length: 1,
+        width: 1 
+    };
+    components.push(obj);
+
+    obj = {
+        row: 10,
+        col: 20,
+        length: 6,
+        width:2
+    };
+    components.push(obj);
+    ctx.translate(offsetX, offsetY);
     drawGrid();
+
+   
 
     function drawGrid()
     {
+        cellSize = defaultCellSize * currentZoom/100;
         
-        let cellSize = defaultCellSize * currentZoom / 100;
-        let columns = width / cellSize;
-        let rows = height/cellSize;
         let currX = 0;
         let currY = 0;
+        let offsetXRel = offsetX * currentZoom/100;
+        let offsetYRel = offsetY * currentZoom/100;
+        let columns = (width - offsetXRel) / cellSize;
+        let rows = (height - offsetYRel)/cellSize;
+        
+
+        console.log("Cell Size: " + cellSize);
+
 
         ctx.lineWidth = 2;
+        ctx.fillStyle = "black";
         if(currentZoom <= 25) ctx.lineWidth = 1;
-        
+        //currX = 0 - Math.abs(offsetXRel % cellSize);
+        //currY = 0 - Math.abs(offsetYRel % cellSize);
+
+        console.log("Current X: " + currX);
+        console.log("Current Y: " + currY);
         ctx.beginPath();
         //draw vertical lines
         for(let i = 0; i < columns; i++)
@@ -32,13 +66,13 @@
             currX += cellSize;
             currY = 0;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, height);
+            ctx.lineTo(currX, height - offsetYRel);
             //if(i >= 2) break;
             
         }
         ctx.stroke();
-        currX = 0;
-        currY = 0;
+        currX = 0 //- Math.abs(offsetXRel % cellSize);
+        currY = 0 //- Math.abs(offsetYRel % cellSize);
         //draw horizontal lines
         for(let i = 0; i < rows; i++)
         {
@@ -51,6 +85,25 @@
         ctx.stroke();
        
         ctx.closePath();
+
+        drawComponents();
+    }
+    
+    function drawComponents()
+    {
+        console.log("Running drawComponents");
+        console.log("Num components: " + components.length);
+        ctx.fillStyle = "red";
+
+        for(let i = 0; i < components.length; i++)
+        {
+            let o = components[i];
+
+            ctx.fillRect(o.col * cellSize, o.row * cellSize, o.width * cellSize, o.length * cellSize);
+            
+            
+        }
+       
     }
 
     function clearCanvas()

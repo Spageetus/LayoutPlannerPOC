@@ -87,13 +87,16 @@ html {
 }
 
 .hotbar-button{
+    display:table-cell;
     height:50px;
     width:50px;
     min-height:75px;
     min-width:75px;
     aspect-ratio:1;
     font-size:24px;
-    box-sizing:border-box;
+    --box-sizing:border-box;
+    text-align:left;
+    padding-bottom:50px;
 
 }
 
