@@ -7,12 +7,16 @@
     let currentZoom = 1;
     const minZoom = 0.2;
     const maxZoom = 2;
+    const panDistance = 0.05; // 5%
     let cellSize = defaultCellSize * currentZoom;
     let width = canvas.width;
     let height = canvas.height;
 
     let relWidth = width * currentZoom;
     let relHeight = height * currentZoom;
+
+    let offsetX = 0;
+    let offsetY = 0;
 
     let components = [];
 
@@ -37,6 +41,7 @@
 
     function drawGrid()
     {
+        
         cellSize = Math.round(defaultCellSize * currentZoom);
         relWidth = Math.round(width / currentZoom);
         relHeight = Math.round(height / currentZoom);
@@ -44,7 +49,8 @@
         let currY = 0;
         let columns = Math.round(relWidth / cellSize) + 1;
         let rows = Math.round(relHeight /cellSize) + 1;
-        
+
+        clearCanvas();
 
         ctx.lineWidth = 2;
         ctx.fillStyle = "black";
@@ -93,7 +99,7 @@
 
     function clearCanvas()
     {
-        ctx.clearRect(0, 0, relWidth, relHeight);
+        ctx.clearRect(-offsetX, 0, relWidth, relHeight);
     }
 
     function zoomOut()
@@ -101,11 +107,13 @@
         console.log("Zooming Out...");
         
         //clear canvas
-        clearCanvas();
+        //clearCanvas();
         currentZoom *= 0.9;
         currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
+        offsetX = Math.round(offsetX * currentZoom);
         if(currentZoom < minZoom) currentZoom = minZoom;
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, 0, 0);
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, offsetX, 0);
+        console.log("Offset X:" + offsetX);
         drawGrid();
     }
 
@@ -114,15 +122,43 @@
         console.log("Zooming In...");
        
         //clear canvas
-        clearCanvas();
+        //clearCanvas();
 
         currentZoom *= 1.1;
         currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
+
+        offsetX = Math.round(offsetX * currentZoom);
         if(currentZoom > maxZoom) currentZoom = maxZoom;
 
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, 0, 0);
+
+        console.log("Offset X:" + offsetX);
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, offsetX, 0);
         drawGrid();
         
+    }
+
+    function panLeft()
+    {
+        console.log("Panning Left");
+        offsetX -= relWidth * panDistance * currentZoom; //shifts everything right by 1%
+        offsetX = Math.round(offsetX);
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, offsetX, 0);
+
+        console.log("Offset X: " + offsetX);
+
+        drawGrid();
+    }
+
+    function panRight(){
+        console.log("Panning Right");
+
+        offsetX += relWidth * panDistance * currentZoom; //shifts everything right by 1%
+        offsetX = Math.round(offsetX);
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, offsetX, 0);
+
+        console.log("Offset X: " + offsetX);
+
+        drawGrid();
     }
 
 </script>
