@@ -87,6 +87,7 @@
     
     function drawComponents()
     {
+        console.log(components.length);
         ctx.fillStyle = "red";
 
         for(let i = 0; i < components.length; i++)
@@ -102,8 +103,9 @@
 
     function clearCanvas()
     {
-        ctx.clearRect(-offsetX / currentZoom, 0, relWidth, relHeight);
-        ctx.fillRect(-offsetX / currentZoom, 0, 10, relHeight);
+        ctx.clearRect(-offsetX / currentZoom, -offsetY/currentZoom, relWidth, relHeight);
+        ctx.fillRect(-offsetX / currentZoom, -offsetY/currentZoom, 10, relHeight);
+        ctx.fillRect(-offsetX / currentZoom, -offsetY / currentZoom, relWidth, 10);
     }
 
     function zoomOut()
@@ -115,8 +117,9 @@
         currentZoom *= 0.9;
         currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
         if(currentZoom < minZoom) currentZoom = minZoom;
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, 0);
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, ctx.getTransform().f);
         offsetX = ctx.getTransform().e;
+        offsetY = ctx.getTransform().f;
         drawGrid();
     }
 
@@ -131,8 +134,9 @@
         
         if(currentZoom > maxZoom) currentZoom = maxZoom;
         
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, 0);
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, ctx.getTransform().f);
         offsetX = ctx.getTransform().e;
+        offsetY = ctx.getTransform().f;
         drawGrid();
         
     }
@@ -153,7 +157,24 @@
         ctx.translate(+relWidth*panDistance, 0);
         offsetX = ctx.getTransform().e;
 
-        console.log("Offset X: " + offsetX);
+
+        drawGrid();
+    }
+
+    function panUp()
+    {
+        console.log("Panning Down");
+        ctx.translate(0, -relHeight*panDistance);
+        offsetY = ctx.getTransform().f;
+
+        drawGrid();
+    }
+
+    function panDown()
+    {
+        console.log("Panning Down");
+        ctx.translate(0, +relHeight*panDistance);
+        offsetY = ctx.getTransform().f;
 
         drawGrid();
     }
