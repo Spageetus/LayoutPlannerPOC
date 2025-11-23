@@ -64,11 +64,6 @@ html {
     border: 4px solid black;
     height:stretch;
     width:stretch;
-    --flex-shrink:0;
-    --width:950px;
-    --height:425px;
-
-
 }
 
 #toolbar
