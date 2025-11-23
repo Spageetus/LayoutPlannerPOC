@@ -4,73 +4,125 @@
     const canvas = document.getElementById("design-canvas");
     const ctx = canvas.getContext("2d");
     const defaultCellSize = 80;
-    let currentZoom = 100;
-    const minZoom = 20;
-    const maxZoom = 200;
+    const skewX = 0;
+    const skewY = 0;
+    let currentZoom = 1;
+    const minZoom = 0.2;
+    const maxZoom = 2;
+    const panDistance = 0.05; // 5%
+    let cellSize = defaultCellSize * currentZoom;
     let width = canvas.width;
     let height = canvas.height;
 
+    let relWidth = width * currentZoom;
+    let relHeight = height * currentZoom;
 
+    let offsetX = 0;
+    let offsetY = 0;
+
+    let components = [];
+
+    let obj = {
+        row: 2,
+        col: 1,
+        length: 1,
+        width: 1 
+    };
+    components.push(obj);
+    
+    obj = {
+        row: 10,
+        col: 20,
+        length: 11,
+        width:5
+    };
+    components.push(obj);
     drawGrid();
+
+   
 
     function drawGrid()
     {
         
-        let cellSize = defaultCellSize * currentZoom / 100;
-        let columns = width / cellSize;
-        let rows = height/cellSize;
-        let currX = 0;
+        cellSize = Math.round(defaultCellSize * currentZoom);
+        relWidth = Math.round(width / currentZoom);
+        relHeight = Math.round(height / currentZoom);
+        let currX = -offsetX/currentZoom;
         let currY = 0;
+        let columns = Math.round(relWidth / cellSize) + 1;
+        let rows = Math.round(relHeight /cellSize) + 1;
+
+        clearCanvas();
 
         ctx.lineWidth = 2;
-        if(currentZoom <= 25) ctx.lineWidth = 1;
-        
+        ctx.fillStyle = "black";
         ctx.beginPath();
         //draw vertical lines
+        //TODO: Increase width of every 8th grid line (size of foundations)
         for(let i = 0; i < columns; i++)
         {
             currX += cellSize;
-            currY = 0;
+            currY = -offsetY/currentZoom;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, height);
-            //if(i >= 2) break;
-            
+            ctx.lineTo(currX, relHeight - offsetY/currentZoom);
         }
         ctx.stroke();
         currX = 0;
-        currY = 0;
+        currY = -offsetY/currentZoom;
         //draw horizontal lines
         for(let i = 0; i < rows; i++)
         {
             currY += cellSize;
-            currX = 0;
+            currX = -offsetX/currentZoom;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(width, currY);
-            //if(i >=2) break;
+            ctx.lineTo(relWidth-offsetX/currentZoom, currY);
         }
         ctx.stroke();
        
         ctx.closePath();
+
+        drawComponents();
+
+        console.log(ctx.getTransform());
+    }
+    
+    function drawComponents()
+    {
+        console.log(components.length);
+        ctx.fillStyle = "red";
+
+        for(let i = 0; i < components.length; i++)
+        {
+            let o = components[i];
+
+            ctx.fillRect(o.col * cellSize, o.row * cellSize, o.width * cellSize, o.length * cellSize);
+            
+            
+        }
+       
     }
 
     function clearCanvas()
     {
-        ctx.clearRect(0, 0, width, height);
+        ctx.clearRect(-offsetX / currentZoom, -offsetY/currentZoom, relWidth, relHeight);
+        ctx.fillRect(-offsetX / currentZoom, -offsetY/currentZoom, 10, relHeight);
+        ctx.fillRect(-offsetX / currentZoom, -offsetY / currentZoom, relWidth, 10);
+
+        console.log("Clearing canvas...");
     }
 
     function zoomOut()
     {
-
         console.log("Zooming Out...");
         
         //clear canvas
-        clearCanvas();
-        
+        //clearCanvas();
         currentZoom *= 0.9;
-        currentZoom = Math.round(currentZoom);
+        currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
         if(currentZoom < minZoom) currentZoom = minZoom;
-        console.log("Current Zoom: " + currentZoom);
-        
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, ctx.getTransform().f);
+        offsetX = ctx.getTransform().e;
+        offsetY = ctx.getTransform().f;
         drawGrid();
     }
 
@@ -78,15 +130,69 @@
     {
         console.log("Zooming In...");
        
-        //clear canvas
-        clearCanvas();
+       
 
         currentZoom *= 1.1;
+        currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
+        
         if(currentZoom > maxZoom) currentZoom = maxZoom;
-        currentZoom = Math.round(currentZoom);
-        console.log("Current Zoom: " + currentZoom);
+        
+        //sets x and y scale while retaining current offset.
+        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, ctx.getTransform().f);
+        offsetX = ctx.getTransform().e;
+        offsetY = ctx.getTransform().f;
         drawGrid();
         
+    }
+
+
+    function panLeft()
+    {
+        console.log("Panning Left");
+        ctx.translate(-relWidth*panDistance, 0);
+        offsetX = ctx.getTransform().e;
+        drawGrid();
+    }
+
+    
+
+    function panRight(){
+        console.log("Panning Right");
+        ctx.translate(+relWidth*panDistance, 0);
+        offsetX = ctx.getTransform().e;
+
+
+        drawGrid();
+    }
+
+    function panUp()
+    {
+        console.log("Panning Down");
+        ctx.translate(0, -relHeight*panDistance);
+        offsetY = ctx.getTransform().f;
+
+        drawGrid();
+    }
+
+    function panDown()
+    {
+        console.log("Panning Down");
+        ctx.translate(0, +relHeight*panDistance);
+        offsetY = ctx.getTransform().f;
+
+        drawGrid();
+    }
+
+    function goHome()
+    {
+        console.log("Going home...");
+        
+        currentZoom = 1;
+        offsetX = 0;
+        offsetY = 0;
+        ctx.setTransform(currentZoom, skewX, skewY, currentZoom, offsetX, offsetY);
+        clearCanvas();
+        drawGrid();
     }
 
 </script>

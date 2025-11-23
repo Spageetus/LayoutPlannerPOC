@@ -43,23 +43,34 @@
 </div>
 
 
-
+@* Event Handler *@
 <script>
-
+    //scroll wheel event
+    window.addEventListener("wheel", function(event)
+    {
+        if(event.deltaY < 0) zoomIn(); //zoom in for scrolling down
+        if(event.deltaY > 0) zoomOut(); //zoom out for scrolling up
+    });
 
     window.addEventListener("keypress", function(event)
     {
-        console.log(event.key);
-
-        if(event.key == '-') zoomOut();
-        if(event.key == '+' || event.key == '=') zoomIn();
-        if(event.key == 'q') clearCanvas();
+        if(event.key == 'd') panRight();
+        if(event.key == 'a') panLeft();
+        if(event.key == 'w') panUp();
+        if(event.key == 's') panDown();
+        if(event.key == 'h') goHome();
+        if(event.key == 'q')
+        {
+            obj = {
+                row: Math.round(Math.random() * 100),
+                col: Math.round(Math.random() * 100),
+                length: Math.round(Math.random() * 10),
+                width:Math.round(Math.random() * 10)
+            };
+            components.push(obj);
+            drawGrid();
+        };
     });
 
-    window.addEventListener("wheel", function(event)
-    {
-
-        if(event.deltaY < 0) zoomIn(); //zoom in for scrolling down
-        if(event.deltaY > 0) zoomOut(); //zoom out for scrolling up
-    })
+    
 </script>
