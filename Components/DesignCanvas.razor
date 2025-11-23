@@ -4,6 +4,8 @@
     const canvas = document.getElementById("design-canvas");
     const ctx = canvas.getContext("2d");
     const defaultCellSize = 80;
+    const skewX = 0;
+    const skewY = 0;
     let currentZoom = 1;
     const minZoom = 0.2;
     const maxZoom = 2;
@@ -27,12 +29,12 @@
         width: 1 
     };
     components.push(obj);
-
+    
     obj = {
         row: 10,
         col: 20,
-        length: 6,
-        width:2
+        length: 11,
+        width:5
     };
     components.push(obj);
     drawGrid();
@@ -45,7 +47,7 @@
         cellSize = Math.round(defaultCellSize * currentZoom);
         relWidth = Math.round(width / currentZoom);
         relHeight = Math.round(height / currentZoom);
-        let currX = 0;
+        let currX = -offsetX/currentZoom;
         let currY = 0;
         let columns = Math.round(relWidth / cellSize) + 1;
         let rows = Math.round(relHeight /cellSize) + 1;
@@ -55,7 +57,7 @@
         ctx.lineWidth = 2;
         ctx.fillStyle = "black";
         ctx.beginPath();
-        //draw 
+        //draw vertical lines
         //TODO: Increase width of every 8th grid line (size of foundations)
         for(let i = 0; i < columns; i++)
         {
@@ -106,6 +108,8 @@
         ctx.clearRect(-offsetX / currentZoom, -offsetY/currentZoom, relWidth, relHeight);
         ctx.fillRect(-offsetX / currentZoom, -offsetY/currentZoom, 10, relHeight);
         ctx.fillRect(-offsetX / currentZoom, -offsetY / currentZoom, relWidth, 10);
+
+        console.log("Clearing canvas...");
     }
 
     function zoomOut()
@@ -134,6 +138,7 @@
         
         if(currentZoom > maxZoom) currentZoom = maxZoom;
         
+        //sets x and y scale while retaining current offset.
         ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, ctx.getTransform().f);
         offsetX = ctx.getTransform().e;
         offsetY = ctx.getTransform().f;
@@ -176,6 +181,18 @@
         ctx.translate(0, +relHeight*panDistance);
         offsetY = ctx.getTransform().f;
 
+        drawGrid();
+    }
+
+    function goHome()
+    {
+        console.log("Going home...");
+        
+        currentZoom = 1;
+        offsetX = 0;
+        offsetY = 0;
+        ctx.setTransform(currentZoom, skewX, skewY, currentZoom, offsetX, offsetY);
+        clearCanvas();
         drawGrid();
     }
 
