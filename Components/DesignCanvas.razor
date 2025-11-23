@@ -62,21 +62,20 @@
         for(let i = 0; i < columns; i++)
         {
             currX += cellSize;
-            currY = 0;
+            currY = -offsetY/currentZoom;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, relHeight);
+            ctx.lineTo(currX, relHeight - offsetY/currentZoom);
         }
         ctx.stroke();
         currX = 0;
-        currY = 0;
+        currY = -offsetY/currentZoom;
         //draw horizontal lines
         for(let i = 0; i < rows; i++)
         {
             currY += cellSize;
-            currX = 0;
+            currX = -offsetX/currentZoom;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(relWidth, currY);
-            ctx.lineTo(relWidth, currY);
+            ctx.lineTo(relWidth-offsetX/currentZoom, currY);
         }
         ctx.stroke();
        
