@@ -1,4 +1,6 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
 <PageTitle>Home</PageTitle>
 <div id="main-div">
     <section id="activity-section">
@@ -38,11 +40,14 @@
         </section>
     </section>
     <aside id="components" width="200">
-        <div>components go here</div>
+        <div>components go here
+            <button class="btn btn-primary2" @onclick="CreateNewBuilding">Add Building</button>
+            <button class ="btn btn-primary" @onclick="GetBuildings">Print Buildings List</button>
+        </div>
     </aside>
 </div>
 
-
+<!--
 @* Event Handler *@
 <script>
     //scroll wheel event
@@ -78,3 +83,29 @@
 
     
 </script>
+-->
+
+<script src="js/scripts.js"></script>
+@code {
+
+    public async Task CreateNewBuilding()
+    {
+        var building = new Building("Test02", "red2", 10, 5);
+
+        await JSRuntime.InvokeVoidAsync("someJsFunction", building);
+
+        var building2 = new Building("Test22", "blue2", 5, 10);
+        await JSRuntime.InvokeVoidAsync("someJsFunction", building2);
+
+
+    }
+
+    public async Task GetBuildings()
+    {
+        foreach(Building buildingt in Building.BuildingsList)
+        {
+    
+            await JSRuntime.InvokeVoidAsync("someJsFunction", buildingt);
+        }
+    }
+}

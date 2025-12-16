@@ -1,28 +1,28 @@
 ﻿<canvas id="design-canvas" width="950" height="400">I am the main canvas</canvas>
 
 <script>
-    const canvas = document.getElementById("design-canvas");
-    const ctx = canvas.getContext("2d");
-    const defaultCellSize = 20;
-    const skewX = 0;
-    const skewY = 0;
-    let currentZoom = 1;
-    const minZoom = 0.2;
-    const maxZoom = 2;
-    const panDistance = 0.05; // 5%
-    let cellSize = defaultCellSize * currentZoom;
-    let width = canvas.width;
-    let height = canvas.height;
+    var newCanvas = document.getElementById("design-canvas");
+    var ctx = newCanvas.getContext("2d");
+    var defaultCellSize = 20;
+    var skewX = 0;
+    var skewY = 0;
+    var currentZoom = 1;
+    var minZoom = 0.2;
+    var maxZoom = 2;
+    var panDistance = 0.05; // 5%
+    var cellSize = defaultCellSize * currentZoom;
+    var width = newCanvas.width;
+    var height = newCanvas.height;
 
-    let relWidth = width * currentZoom;
-    let relHeight = height * currentZoom;
+    var relWidth = width * currentZoom;
+    var relHeight = height * currentZoom;
 
-    let offsetX = 0;
-    let offsetY = 0;
+    var offsetX = 0;
+    var offsetY = 0;
 
-    let components = [];
+    var components = [];
 
-    let obj = {
+    var obj = {
         row: 2,
         col: 1,
         length: 1,
@@ -108,7 +108,7 @@
         ctx.fillRect(-offsetX / currentZoom, -offsetY/currentZoom, 10, relHeight);
         ctx.fillRect(-offsetX / currentZoom, -offsetY / currentZoom, relWidth, 10);
 
-        console.log("Clearing canvas...");
+        console.log("Clearing newCanvas...");
     }
 
     function zoomOut()
@@ -196,3 +196,4 @@
     }
 
 </script>
+
