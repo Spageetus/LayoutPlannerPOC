@@ -1,18 +1,20 @@
 ﻿<canvas id="design-canvas" width="950" height="400">I am the main canvas</canvas>
 
+
 <script>
-    const canvas = document.getElementById("design-canvas");
-    const ctx = canvas.getContext("2d");
-    const defaultCellSize = 80;
-    const skewX = 0;
-    const skewY = 0;
-    let currentZoom = 1;
-    const minZoom = 0.2;
-    const maxZoom = 2;
-    const panDistance = 0.05; // 5%
-    let cellSize = defaultCellSize * currentZoom;
-    let width = canvas.width;
-    let height = canvas.height;
+    //TODO: Rewrite ALL of this
+    var newCanvas = document.getElementById("design-canvas");
+    var ctx = newCanvas.getContext("2d");
+    var defaultCellSize = 20;
+    var skewX = 0;
+    var skewY = 0;
+    var currentZoom = 1;
+    var minZoom = 0.2;
+    var maxZoom = 2;
+    var panDistance = 0.05; // 5%
+    var cellSize = defaultCellSize * currentZoom;
+    var width = newCanvas.width;
+    var height = newCanvas.height;
 
     let relWidth = width * currentZoom;
     let relHeight = height * currentZoom;
@@ -82,25 +84,7 @@
        
         ctx.closePath();
 
-        drawComponents();
-
         console.log(ctx.getTransform());
-    }
-    
-    function drawComponents()
-    {
-        console.log(components.length);
-        ctx.fillStyle = "red";
-
-        for(let i = 0; i < components.length; i++)
-        {
-            let o = components[i];
-
-            ctx.fillRect(o.col * cellSize, o.row * cellSize, o.width * cellSize, o.length * cellSize);
-            
-            
-        }
-       
     }
 
     function clearCanvas()
