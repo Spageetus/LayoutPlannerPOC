@@ -48,12 +48,18 @@
     //scroll wheel event
     window.addEventListener("wheel", function(event)
     {
+        //temp code for disabling zooming
+        if(true) return; //TODO: Remove
+
         if(event.deltaY < 0) zoomIn(); //zoom in for scrolling down
         if(event.deltaY > 0) zoomOut(); //zoom out for scrolling up
     });
 
     window.addEventListener("keypress", function(event)
     {
+
+        //temp code for disabling panning 
+        if(true) return; //TODO: Remove
         if(event.key == 'd') panRight();
         if(event.key == 'a') panLeft();
         if(event.key == 'w') panUp();
