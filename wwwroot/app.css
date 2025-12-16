@@ -95,11 +95,3 @@ html {
 
 }
 
-#components{
-    background-color:green;
-    display:flex;
-    min-width:200px;
-    height:stretch;
-    border:4px solid black;
-}
-
