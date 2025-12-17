@@ -6,39 +6,10 @@
     var canvas = document.getElementById("design-canvas");
     var ctx = canvas.getContext("2d");
     var defaultCellSize = 20;
-    var skewX = 0;
-    var skewY = 0;
-    var currentZoom = 1;
-    var minZoom = 0.2;
-    var maxZoom = 2;
-    var panDistance = 0.05; // 5%
-    var cellSize = defaultCellSize * currentZoom;
+    var cellSize = defaultCellSize;
     var width = canvas.width;
     var height = canvas.height;
 
-    let relWidth = width * currentZoom;
-    let relHeight = height * currentZoom;
-
-    let offsetX = 0;
-    let offsetY = 0;
-
-    let components = [];
-
-    let obj = {
-        row: 2,
-        col: 1,
-        length: 1,
-        width: 1 
-    };
-    components.push(obj);
-    
-    obj = {
-        row: 10,
-        col: 20,
-        length: 11,
-        width:5
-    };
-    components.push(obj);
     drawGrid();
 
    
@@ -46,13 +17,11 @@
     function drawGrid()
     {
         
-        cellSize = Math.round(defaultCellSize * currentZoom);
-        relWidth = Math.round(width / currentZoom);
-        relHeight = Math.round(height / currentZoom);
-        let currX = -offsetX/currentZoom;
+        cellSize = defaultCellSize
+        let currX = 0;
         let currY = 0;
-        let columns = Math.round(relWidth / cellSize) + 1;
-        let rows = Math.round(relHeight /cellSize) + 1;
+        let columns = Math.trunc(width/cellSize);
+        let rows = Math.trunc(height/cellSize);
 
         clearCanvas();
 
@@ -66,7 +35,7 @@
             currX += cellSize;
             currY = 0;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, relHeight);
+            ctx.lineTo(currX, height);
         }
         ctx.stroke();
         currX = 0;
@@ -77,14 +46,11 @@
             currY += cellSize;
             currX = 0;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(relWidth, currY);
-            ctx.lineTo(relWidth, currY);
+            ctx.lineTo(width, currY);
         }
         ctx.stroke();
        
         ctx.closePath();
-
-        //console.log(ctx.getTransform());
     }
 
     function clearCanvas()
@@ -93,95 +59,9 @@
         canvas.width = canvas.width;
         canvas.height = canvas.height;
 
-        // ctx.clearRect(-offsetX / currentZoom, -offsetY/currentZoom, relWidth, relHeight);
-        // ctx.fillRect(-offsetX / currentZoom, -offsetY/currentZoom, 10, relHeight);
-        // ctx.fillRect(-offsetX / currentZoom, -offsetY / currentZoom, relWidth, 10);
-
         console.log("Clearing canvas...");
     }
 
-    function zoomOut()
-    {
-        console.log("Zooming Out...");
-        
-        //clear canvas
-        //clearCanvas();
-        currentZoom *= 0.9;
-        currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
-        if(currentZoom < minZoom) currentZoom = minZoom;
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, ctx.getTransform().f);
-        offsetX = ctx.getTransform().e;
-        offsetY = ctx.getTransform().f;
-        drawGrid();
-    }
-
-    function zoomIn()
-    {
-        console.log("Zooming In...");
-       
-       
-
-        currentZoom *= 1.1;
-        currentZoom = Math.round(currentZoom*100) / 100; //rounding current zoom to nearest %
-        
-        if(currentZoom > maxZoom) currentZoom = maxZoom;
-        
-        //sets x and y scale while retaining current offset.
-        ctx.setTransform(currentZoom, 0, 0, currentZoom, ctx.getTransform().e, ctx.getTransform().f);
-        offsetX = ctx.getTransform().e;
-        offsetY = ctx.getTransform().f;
-        drawGrid();
-        
-    }
-
-
-    function panLeft()
-    {
-        console.log("Panning Left");
-        ctx.translate(-relWidth*panDistance, 0);
-        offsetX = ctx.getTransform().e;
-        drawGrid();
-    }
-
-    
-
-    function panRight(){
-        console.log("Panning Right");
-        ctx.translate(+relWidth*panDistance, 0);
-        offsetX = ctx.getTransform().e;
-
-
-        drawGrid();
-    }
-
-    function panUp()
-    {
-        console.log("Panning Down");
-        ctx.translate(0, -relHeight*panDistance);
-        offsetY = ctx.getTransform().f;
-
-        drawGrid();
-    }
-
-    function panDown()
-    {
-        console.log("Panning Down");
-        ctx.translate(0, +relHeight*panDistance);
-        offsetY = ctx.getTransform().f;
-
-        drawGrid();
-    }
-
-    function goHome()
-    {
-        console.log("Going home...");
-        
-        currentZoom = 1;
-        offsetX = 0;
-        offsetY = 0;
-        ctx.setTransform(currentZoom, skewX, skewY, currentZoom, offsetX, offsetY);
-        clearCanvas();
-        drawGrid();
-    }
+   
 
 </script>
