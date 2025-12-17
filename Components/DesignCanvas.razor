@@ -3,8 +3,8 @@
 
 <script>
     //TODO: Rewrite ALL of this
-    var newCanvas = document.getElementById("design-canvas");
-    var ctx = newCanvas.getContext("2d");
+    var canvas = document.getElementById("design-canvas");
+    var ctx = canvas.getContext("2d");
     var defaultCellSize = 20;
     var skewX = 0;
     var skewY = 0;
@@ -13,8 +13,8 @@
     var maxZoom = 2;
     var panDistance = 0.05; // 5%
     var cellSize = defaultCellSize * currentZoom;
-    var width = newCanvas.width;
-    var height = newCanvas.height;
+    var width = canvas.width;
+    var height = canvas.height;
 
     let relWidth = width * currentZoom;
     let relHeight = height * currentZoom;
@@ -83,14 +83,18 @@
        
         ctx.closePath();
 
-        console.log(ctx.getTransform());
+        //console.log(ctx.getTransform());
     }
 
     function clearCanvas()
     {
-        ctx.clearRect(-offsetX / currentZoom, -offsetY/currentZoom, relWidth, relHeight);
-        ctx.fillRect(-offsetX / currentZoom, -offsetY/currentZoom, 10, relHeight);
-        ctx.fillRect(-offsetX / currentZoom, -offsetY / currentZoom, relWidth, 10);
+        //resizing canvas clears everything on it
+        canvas.width = canvas.width;
+        canvas.height = canvas.height;
+
+        // ctx.clearRect(-offsetX / currentZoom, -offsetY/currentZoom, relWidth, relHeight);
+        // ctx.fillRect(-offsetX / currentZoom, -offsetY/currentZoom, 10, relHeight);
+        // ctx.fillRect(-offsetX / currentZoom, -offsetY / currentZoom, relWidth, 10);
 
         console.log("Clearing canvas...");
     }
