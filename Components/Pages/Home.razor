@@ -37,9 +37,13 @@
             </button>
         </section>
     </section>
-    <aside id="components" width="200">
-        <div>components go here</div>
-    </aside>
+    <ComponentBrowser>
+        <p>Selected: @selectedButton</p>
+
+
+        <ComponentButton Color="blue"></ComponentButton>
+        <ComponentButton Color="red"></ComponentButton>
+    </ComponentBrowser>
 </div>
 
 
@@ -80,3 +84,13 @@
 
     
 </script>
+
+@code{
+    private string selectedButton = "None";
+
+    private void SetSelected(string value)
+    {
+        selectedButton = value;
+    }
+
+}
