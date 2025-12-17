@@ -44,7 +44,7 @@ html {
 }
 
 #main-div{
-    background-color:red;
+    --background-color:red;
     display:flex;
     gap:20px;
 
