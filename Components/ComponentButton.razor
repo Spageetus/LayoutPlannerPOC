@@ -1,0 +1,19 @@
+﻿<button @onclick="() => OnSelect.InvokeAsync(Color)">
+    @Color
+</button>
+
+
+
+@code {
+    [Parameter]
+    public string Color { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnSelect { get; set; }
+
+    private async Task HandleClick()
+    {
+        await OnSelect.InvokeAsync(Color);
+    }
+
+}

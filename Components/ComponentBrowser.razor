@@ -1,7 +1,9 @@
 ﻿<aside id="component-browser">
-    Hello World!
+    <h2 style="align-self:center">Components</h2>
+    @ChildContent
 </aside>
 
 @code {
-
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
 }
