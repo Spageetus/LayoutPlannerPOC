@@ -1,9 +1,13 @@
 ﻿<aside id="component-browser">
     <h2 style="align-self:center">Components</h2>
+    <p>Selected: @SelectedColor</p>
     @ChildContent
 </aside>
 
 @code {
     [Parameter]
     public RenderFragment ChildContent { get; set; }
+
+    [Parameter] 
+    public string SelectedColor { get; set; }
 }
