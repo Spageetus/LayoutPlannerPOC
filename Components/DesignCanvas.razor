@@ -1,67 +1,60 @@
-﻿<canvas id="design-canvas" width="950" height="400">I am the main canvas</canvas>
+﻿@inject IJSRuntime JSRuntime
+
+<canvas @ref="_canvasReference" @onclick="HandleCanvasClick" id="design-canvas" width="250" height="350">I am the main canvas</canvas>
+<p>Clicked coordinate: x = @_clickX, Y = @_clickY</p>
+
+@code {
+    [Parameter]
+    public string SelectedColor { get; set; } = "none";
 
 
-<script>
-    //TODO: Rewrite ALL of this
-    var canvas = document.getElementById("design-canvas");
-    var ctx = canvas.getContext("2d");
-    var defaultCellSize = 20;
-    var cellSize = defaultCellSize;
-    var width = canvas.width;
-    var height = canvas.height;
+    private ElementReference _canvasReference;
+    // ...
+    private int cellSize = 20;
 
-    drawGrid();
+    private Random rand = new Random();
 
-   
 
-    function drawGrid()
+    private double _clickX;
+    private double _clickY;
+
+    //sets up canvas for the first time (if necessary), then draws canvas
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        
-        cellSize = defaultCellSize
-        let currX = 0;
-        let currY = 0;
-        let columns = Math.trunc(width/cellSize);
-        let rows = Math.trunc(height/cellSize);
-
-        clearCanvas();
-
-        ctx.lineWidth = 2;
-        ctx.fillStyle = "black";
-        ctx.beginPath();
-        //draw vertical lines
-        //TODO: Increase width of every 8th grid line (size of foundations)
-        for(let i = 0; i < columns; i++)
+        if (firstRender)
         {
-            currX += cellSize;
-            currY = -offsetY/currentZoom;
-            ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, height);
+            await JSRuntime.InvokeVoidAsync("canvasInterop.setupCanvas", _canvasReference, cellSize);
+            SelectedColor = "none";
         }
-        ctx.stroke();
-        currX = 0;
-        currY = -offsetY/currentZoom;
-        //draw horizontal lines
-        for(let i = 0; i < rows; i++)
-        {
-            currY += cellSize;
-            currX = -offsetX/currentZoom;
-            ctx.moveTo(currX, currY);
-            ctx.lineTo(width, currY);
-        }
-        ctx.stroke();
-       
-        ctx.closePath();
+        await Redraw();
     }
 
-    function clearCanvas()
-    {
-        //resizing canvas clears everything on it
-        canvas.width = canvas.width;
-        canvas.height = canvas.height;
 
-        console.log("Clearing canvas...");
+
+    protected async Task Redraw()
+    {
+        await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
     }
 
-   
+    private async Task HandleCanvasClick(MouseEventArgs e)
+    {
+        _clickX = Math.Truncate(e.OffsetX / cellSize);
+        _clickY = Math.Truncate(e.OffsetY / cellSize);
+        if (SelectedColor.Equals("none"))
+        {
+            await JSRuntime.InvokeVoidAsync("logString", "Selected Color is \"none\"");
+            return;
+        }
+        var c = new ComponentNode(SelectedColor);
+        c.CellX = _clickX;
+        c.CellY = _clickY;
 
-</script>
+        c.width = rand.Next(1, 10);
+        c.height = rand.Next(1, 10);
+
+        await JSRuntime.InvokeVoidAsync("canvasInterop.addComponent", c);
+        //_clickX = e.OffsetX;
+        //_clickY = e.OffsetY;
+        await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
+    }
+}

@@ -1,9 +1,10 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 <PageTitle>Home</PageTitle>
+
 <div id="main-div">
     <section id="activity-section">
-        <DesignCanvas></DesignCanvas>
+        <DesignCanvas SelectedColor="@selectedColor"></DesignCanvas>
         
         <section id="toolbar">
             <button class="hotbar-button">
@@ -44,6 +45,9 @@
 
         <ComponentButton Color="blue" OnSelect="HandleSelect"></ComponentButton>
         <ComponentButton Color="red" OnSelect="HandleSelect"></ComponentButton>
+        <ComponentButton Color="green" OnSelect="HandleSelect"></ComponentButton>
+        <ComponentButton Color="purple" OnSelect="HandleSelect"></ComponentButton>
+        <ComponentButton Color="yellow" OnSelect="HandleSelect"></ComponentButton>
     </ComponentBrowser>
 </div>
 
