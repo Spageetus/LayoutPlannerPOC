@@ -1,5 +1,9 @@
-﻿<aside id="component-browser">
+﻿@inject IJSRuntime JSRuntime
+
+<aside id="component-browser">
     <h2 style="align-self:center">Components</h2>
+    <button @onclick="ExportDesign">Export to string</button>
+    <button @onclick="ImportDesign">Import from string</button>
     <p>Selected: @SelectedColor</p>
     @ChildContent
 </aside>
@@ -10,4 +14,16 @@
 
     [Parameter] 
     public string SelectedColor { get; set; }
+
+    async public void ExportDesign()
+    {
+        ComponentNode.exportToString();
+    }
+
+    async public void ImportDesign()
+    {
+        //TODO: Actually allow user to paste strings
+        List<ComponentNode> components = ComponentNode.ImportFromString("""[{"Color":"green","CellX":37,"CellY":10,"width":4,"height":2},{"Color":"green","CellX":16,"CellY":4,"width":8,"height":7},{"Color":"blue","CellX":42,"CellY":5,"width":5,"height":9},{"Color":"red","CellX":28,"CellY":16,"width":4,"height":9},{"Color":"yellow","CellX":30,"CellY":4,"width":3,"height":8}]""");
+        await JSRuntime.InvokeVoidAsync("canvasInterop.setComponents", components);
+    }
 }

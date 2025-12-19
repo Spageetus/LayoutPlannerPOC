@@ -91,6 +91,11 @@
         }
     },
 
+    setComponents: function (componentsList) {
+        this.components = componentsList;
+        this.redraw();
+    },
+
     drawComponents: function () {
         if (!ctx) return;
         console.log("Drawing Components...");
