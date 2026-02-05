@@ -23,7 +23,12 @@
     async public void ImportDesign()
     {
         //TODO: Actually allow user to paste strings
-        List<ComponentNode> components = ComponentNode.ImportFromString("""[{"Color":"green","CellX":37,"CellY":10,"width":4,"height":2},{"Color":"green","CellX":16,"CellY":4,"width":8,"height":7},{"Color":"blue","CellX":42,"CellY":5,"width":5,"height":9},{"Color":"red","CellX":28,"CellY":16,"width":4,"height":9},{"Color":"yellow","CellX":30,"CellY":4,"width":3,"height":8}]""");
+        Console.Write("am I running?");
+        await JSRuntime.InvokeVoidAsync("applyStyleForElement", new { id = "inputmodal", attrib = "display", value = "block" });
+
+        Console.Write("am I running?");
+        List<ComponentNode> components = ComponentNode.ImportFromString("""[{"Color":"blue","CellX":9,"CellY":4,"width":4,"height":9},{"Color":"red","CellX":28,"CellY":8,"width":1,"height":2},{"Color":"red","CellX":46,"CellY":7,"width":9,"height":8},{"Color":"green","CellX":38,"CellY":8,"width":1,"height":9},{"Color":"green","CellX":22,"CellY":3,"width":3,"height":4},{"Color":"purple","CellX":58,"CellY":6,"width":7,"height":8},{"Color":"purple","CellX":19,"CellY":16,"width":6,"height":7},{"Color":"yellow","CellX":21,"CellY":10,"width":4,"height":9},{"Color":"yellow","CellX":49,"CellY":21,"width":5,"height":8}]""");
         await JSRuntime.InvokeVoidAsync("canvasInterop.setComponents", components);
+
     }
 }

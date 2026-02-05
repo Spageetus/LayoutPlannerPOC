@@ -1,0 +1,26 @@
+﻿@rendermode InteractiveServer
+
+<div @ref="InputModalRef" class="modal" id="inputmodal">
+    <h3>InputModal</h3>
+    <textarea type="text" id="importInput"  />
+    
+    <div style="align-items:end">
+        <button>Cancel</button>
+        <button onclick="getValue()">Confirm</button>
+    </div>
+</div>
+
+<script>
+    var x = document.getElementById("importInput");
+    var inputModal = document.getElementById("inputmodal");
+    inputModal.style.display = "none";
+    function getValue()
+    {
+        console.log("Inputted text: " + x.value);
+    }
+
+    getValue();
+</script>
+@code {
+    public ElementReference InputModalRef;
+}

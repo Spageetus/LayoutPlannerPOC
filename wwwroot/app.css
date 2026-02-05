@@ -95,3 +95,20 @@ html {
 
 }
 
+.modal
+{
+
+    background-color:lightgray;
+    border:2px solid grey;
+    padding:4px;
+    width:fit-content;
+    position: fixed;
+    left:100px;
+    top: 100px;
+}
+
+textarea{
+    aspect-ratio:3/2;
+    text-wrap:auto;
+    resize:none;
+}
