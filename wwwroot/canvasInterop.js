@@ -11,11 +11,13 @@
         if (!canvasElement) {
             return;
         }
-        
+        const style = window.getComputedStyle(canvasElement)
         ctx = canvasElement.getContext("2d");
         canvas = canvasElement;
-        canvasElement.width = canvasElement.clientWidth;
-        canvasElement.height = canvasElement.clientHeight;
+        canvasElement.width = window.innerWidth - parseInt(style.marginLeft, 10) * 2;
+        canvasElement.height = window.innerHeight - parseInt(style.marginTop, 10) * 2.2; //for whatever reason, the height needs to be a bit smaller or scrollbars appear and fuck it up
+        console.log(window.innerHeight - parseInt(style.marginTop, 10) * 2);
+        //canvasElement.height = 666;
         width = canvasElement.width;
         height = canvasElement.height;
         cellSize = _cellSize;
