@@ -34,7 +34,7 @@
         let columns = Math.trunc(width / cellSize) +1;
         let rows = Math.trunc(height / cellSize) +1;
 
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 0.5;
         ctx.fillStyle = "black";
         ctx.beginPath();
         //draw vertical lines
@@ -98,11 +98,13 @@
 
     drawComponents: function () {
         if (!ctx) return;
+        ctx.globalAlpha = 0.8;
         console.log("Drawing Components...");
         for (let c of this.components) {
             console.log(c);
             ctx.fillStyle = c.color;
             ctx.fillRect(c.cellX * cellSize, c.cellY * cellSize, cellSize * c.width, cellSize * c.height);
         }
+        ctx.globalAlpha = 1;
     }
 };
