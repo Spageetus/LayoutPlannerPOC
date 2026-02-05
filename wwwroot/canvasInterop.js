@@ -14,10 +14,12 @@
         const style = window.getComputedStyle(canvasElement)
         ctx = canvasElement.getContext("2d");
         canvas = canvasElement;
-        canvasElement.width = window.innerWidth - parseInt(style.marginLeft, 10) * 2;
-        canvasElement.height = window.innerHeight - parseInt(style.marginTop, 10) * 2.2; //for whatever reason, the height needs to be a bit smaller or scrollbars appear and fuck it up
-        console.log(window.innerHeight - parseInt(style.marginTop, 10) * 2);
-        //canvasElement.height = 666;
+        const horizSpacing = parseInt(style.marginLeft, 10) * 2 + parseInt(style.borderLeft, 10) * 2.2;
+        const vertSpacing = (parseInt(style.marginTop, 10) + parseInt(style.borderTop, 10)) * 2.2;
+        canvasElement.width = window.innerWidth - horizSpacing;
+        canvasElement.height = window.innerHeight - vertSpacing;
+        console.log(window.innerHeight - vertSpacing);
+        //canvasElement.height = 660;
         width = canvasElement.width;
         height = canvasElement.height;
         cellSize = _cellSize;
