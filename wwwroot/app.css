@@ -42,28 +42,6 @@ html, body {
     margin: 0;
 }
 /*
-#activity-section {
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    align-items:flex-start;
-    flex:1 0 0;
-    --height:90%;
-    position:relative;
-}
-*/
-/*
-#design-canvas {
-    background-color: none;
-    border: 4px solid black;
-    height:stretch;
-    width:stretch;
-    position:absolute;
-    top: 0;
-    left: 0;
-}
-*/
-/*
 #toolbar
 {
     background-color:aqua;
