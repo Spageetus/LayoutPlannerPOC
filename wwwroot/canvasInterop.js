@@ -14,14 +14,9 @@
         ctx = canvasElement.getContext("2d");
         canvas = canvasElement;
 
-        //calculate the canvas size
-        const style = window.getComputedStyle(canvasElement)
-        const horizSpacing = parseInt(style.marginLeft, 10) * 2 + parseInt(style.borderLeft, 10) * 2.2;
-        const vertSpacing = (parseInt(style.marginTop, 10) + parseInt(style.borderTop, 10)) * 2.2;
-
         //resize the canvas
-        canvasElement.width = window.innerWidth - horizSpacing;
-        canvasElement.height = window.innerHeight - vertSpacing;
+        canvasElement.width = canvasElement.clientWidth;
+        canvasElement.height = canvasElement.clientHeight;
 
         //setup variables for drawing on the canvas
         width = canvasElement.width;
