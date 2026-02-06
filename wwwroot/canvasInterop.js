@@ -11,11 +11,14 @@
         if (!canvasElement) {
             return;
         }
-        
         ctx = canvasElement.getContext("2d");
         canvas = canvasElement;
+
+        //resize the canvas
         canvasElement.width = canvasElement.clientWidth;
         canvasElement.height = canvasElement.clientHeight;
+
+        //setup variables for drawing on the canvas
         width = canvasElement.width;
         height = canvasElement.height;
         cellSize = _cellSize;

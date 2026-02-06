@@ -1,0 +1,8 @@
+﻿#design-canvas {
+    background-color: white;
+    display: flex;
+    margin: 16px;
+    height: stretch;
+    width: stretch;
+    border: 4px solid black;
+}

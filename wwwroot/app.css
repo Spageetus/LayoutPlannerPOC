@@ -37,73 +37,50 @@ h1:focus {
     text-align: start;
 }
 
-html {
-    --overflow:clip;
-    margin:10px;
-    border:1px dashed;
-}
-
-#main-div{
-    --background-color:red;
-    display:flex;
-    gap:20px;
-
-}
-
-#activity-section {
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    align-items:flex-start;
-    flex:1 0 0;
-    --height:90%;
-    position:relative;
-}
-
-#design-canvas {
-    background-color: none;
-    border: 4px solid black;
-    height:stretch;
-    width:stretch;
-    position:absolute;
-    top: 0;
-    left: 0;
+html, body {
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
 }
 
 #toolbar
 {
     background-color:aqua;
     height:auto;
-    width:stretch;
+    width:fit-content;
     display:flex;
     flex-direction:row;
     gap:10px;
     padding:10px;
     border:4px solid black;
-    border-top:none;
     position: absolute;
+    left: 0%;
     bottom: 0%;
-    left: 0;
     z-index: 10;
-
-    
-    
+    margin: 16px;
 }
 
-.hotbar-button{
-    display:table-cell;
-    height:50px;
-    width:50px;
-    min-height:75px;
-    min-width:75px;
-    aspect-ratio:1;
-    font-size:24px;
-    --box-sizing:border-box;
-    text-align:left;
-    padding-bottom:50px;
-
+.hotbar-button {
+    display: table-cell;
+    height: 50px;
+    width: 50px;
+    min-height: 75px;
+    min-width: 75px;
+    aspect-ratio: 1;
+    font-size: 24px;
+    text-align: left;
+    padding-bottom: 50px;
 }
 
+
+#activity-section{
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+/*
 .modal
 {
    
@@ -115,9 +92,11 @@ html {
     left:100px;
     top: 100px;
 }
-
+*/
+/*
 textarea{
     aspect-ratio:3/2;
     text-wrap:auto;
     resize:none;
 }
+    */
