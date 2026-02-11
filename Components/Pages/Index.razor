@@ -1,0 +1,130 @@
+﻿@page "/index"
+@using Microsoft.EntityFrameworkCore
+@using LayoutPlannerPOC.Data
+
+
+@inject IDbContextFactory<FactoryComponentContext> FactoryComponentContextFactory;
+
+<PageTitle>Current Components</PageTitle>
+
+
+@if (ShowCreate)
+{
+    <h3>Add a New Component</h3>
+    <div class="row">
+        <label for="Name" class="col-4 col-form-label">Name</label>
+        <div class="col-8">
+            <input id="Name" name="Name" type="text" class="form-control" @bind="@NewFactoryComponent.Name"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="ImageFilePath" class="col-4 col-form-label">Image File Path</label>
+        <div class="col-8">
+            <input id="ImageFilePath" name="ImageFilePath" type="text" class="form-control" @bind="@NewFactoryComponent.ImageFilePath"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="Height" class="col-4 col-form-label">Component Height</label>
+        <div class="col-8">
+            <input id="Height" name="Height" type="number" class="form-control" @bind="@NewFactoryComponent.Height"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="Width" class="col-4 col-form-label">Component Width</label>
+        <div class="col-8">
+            <input id="Width" name="Width" type="number" class="form-control" @bind="@NewFactoryComponent.Width"/>
+        </div>
+    </div>
+    <div class="row">
+        <label for="Rotation" class="col-4 col-form-label">Rotation (0, 90, 180, 270)</label>
+        <div class="col-8">
+            <input id="Rotation" name="Rotation" type="number" class="form-control" @bind="@NewFactoryComponent.Rotation"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="X" class="col-4 col-form-label">X Position</label>
+        <div class="col-8">
+            <input id="X" name="X" type="number" class="form-control" @bind="@NewFactoryComponent.X"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <label for="Y" class="col-4 col-form-label">Y Position</label>
+        <div class="col-8">
+            <input id="Y" name="Y" type="number" class="form-control" @bind="@NewFactoryComponent.Y"/>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <div class="offset-4 col-8">
+            <button name="submit" type="submit" class="btn btn-primary" @onclick="CreateNewFactoryComponent">Submit</button>
+        </div>
+    </div>
+}
+else
+{
+    <div class="form-group row">
+        <div class="offset-4 col-8">
+            <button name="submit" type="submit" class="btn btn-primary" @onclick="ShowCreateForm">Add a New Component</button>
+        </div>
+    </div>
+
+    
+    @if(@FactoryComponents2 is not null && @FactoryComponents2.Count > 0)
+    {
+        <h3>Test</h3>
+        // display
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-bordered table-light border-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Image File Path</th>
+                        <th scope="col">Height</th>
+                        <th scope="col">Width</th>
+                        <th scope="col">Rotation</th>
+                        <th scope="col">X</th>
+                        <th scope="col">Y</th>
+                        <th scope="col">Edit</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+            <tbody>
+
+        @foreach (var component in @FactoryComponents2)
+        {
+            <tr>
+                <th scope="row">@component.Id</th>
+                <td>@component.Name</td>
+                <td>@component.ImageFilePath</td>
+                <td>@component.Height</td>
+                <td>@component.Width</td>
+                <td>@component.Rotation</td>
+                <td>@component.X</td>
+                <td>@component.Y</td>
+                <td></td>
+                <td></td>
+            </tr>
+        }
+            </tbody>
+        </table>
+    </div>
+
+    }
+    else
+    {
+        @if(FactoryComponents2 is null)
+        {
+            <h3>Factory Components is null</h3>
+        }
+        else
+        {
+            <h3>Factory Component count: @FactoryComponents2.Count</h3>
+        }
+    }
+}
