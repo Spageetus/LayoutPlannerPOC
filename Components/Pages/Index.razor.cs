@@ -9,11 +9,16 @@ namespace LayoutPlannerPOC.Components.Pages
     public partial class Index : IAsyncDisposable 
     {
         public bool ShowCreate {  get; set; }
+        public bool ShowEdit { get; set; }
+        public int EditingId { get; set; }
         
         private FactoryComponentContext? _context;
         public FactoryComponent? NewFactoryComponent { get; set; }
 
         public List<FactoryComponent>? FactoryComponents2 { get; set; }
+
+        public FactoryComponent? FactoryComponentToUpdate { get; set; }
+
         
         protected override async Task OnInitializedAsync()
         {
@@ -21,6 +26,13 @@ namespace LayoutPlannerPOC.Components.Pages
             await ShowFactoryComponents();
         }
 
+        public async ValueTask DisposeAsync()
+        {
+            if (_context is not null) await _context.DisposeAsync();
+            _context = null;
+        }
+
+        //---------------Create---------------///
         public void ShowCreateForm()
         {
             NewFactoryComponent = new FactoryComponent();
@@ -41,6 +53,7 @@ namespace LayoutPlannerPOC.Components.Pages
             await ShowFactoryComponents();
         }
 
+        //----------------Read-----------------///
         public async Task ShowFactoryComponents()
         {
             _context ??= await FactoryComponentContextFactory.CreateDbContextAsync();
@@ -52,13 +65,33 @@ namespace LayoutPlannerPOC.Components.Pages
                 FactoryComponents2 = await _context.FactoryComponents.ToListAsync();
             }
 
-            if (_context is not null) await DisposeAsync(); //this code throws an error saying 
+            if (_context is not null) await DisposeAsync(); //sometimes ive seen this throw an error...  
         }
 
-        public async ValueTask DisposeAsync()
+
+        //---------------Edit----------------///
+
+        public async Task ShowEditForm(FactoryComponent ourFactoryComponent)
         {
-            if(_context is not null) await _context.DisposeAsync();
-            _context = null;
+            _context ??= await FactoryComponentContextFactory.CreateDbContextAsync();
+            FactoryComponentToUpdate = _context.FactoryComponents.FirstOrDefault(x => x.Id == ourFactoryComponent.Id);
+            ShowEdit = true;
+            EditingId = ourFactoryComponent.Id;
         }
+
+        public async Task UpdateFactoryComponent()
+        {
+            _context ??= await FactoryComponentContextFactory.CreateDbContextAsync();
+            if(_context is not null)
+            {
+                if (FactoryComponentToUpdate is not null) _context.FactoryComponents.Update(FactoryComponentToUpdate);
+                await _context.SaveChangesAsync();
+                await DisposeAsync();
+            }
+            ShowEdit = false;
+            await ShowFactoryComponents(); //TODO: maybe remove?
+        }
+
+        
     }
 }

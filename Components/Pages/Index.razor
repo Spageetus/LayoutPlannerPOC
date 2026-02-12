@@ -98,18 +98,54 @@ else
 
         @foreach (var component in @FactoryComponents2)
         {
-            <tr>
-                <th scope="row">@component.Id</th>
-                <td>@component.Name</td>
-                <td>@component.ImageFilePath</td>
-                <td>@component.Height</td>
-                <td>@component.Width</td>
-                <td>@component.Rotation</td>
-                <td>@component.X</td>
-                <td>@component.Y</td>
-                <td></td>
-                <td></td>
-            </tr>
+            @if(!@ShowEdit)
+            {
+                <tr>
+                    <th scope="row">@component.Id</th>
+                    <td>@component.Name</td>
+                    <td>@component.ImageFilePath</td>
+                    <td>@component.Height</td>
+                    <td>@component.Width</td>
+                    <td>@component.Rotation</td>
+                    <td>@component.X</td>
+                    <td>@component.Y</td>
+                    <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(component)">Edit</button></td>
+                    <td></td>
+                </tr>       
+            }
+            else
+            {
+                if(@FactoryComponentToUpdate is not null && FactoryComponentToUpdate.Id == component.Id)
+                {
+                    <tr>
+                        <th scope="row">@component.Id</th>
+                        <td><input id="Name" name="Name" type="text" class="form-control" @bind="@FactoryComponentToUpdate.Name"/></td>
+                        <td><input id="ImageFilePath" name="Image File Path" type="text" class="form-control" @bind="@FactoryComponentToUpdate.ImageFilePath" /></td>
+                        <td><input id="Height" name="Height" type="number" class="form-control" @bind="@FactoryComponentToUpdate.Height"/></td>
+                        <td><input id="Width" name="Width" type="number" class="form-control" @bind="@FactoryComponentToUpdate.Width"/></td>
+                        <td><input id="Rotation" name="Rotation" type="number" class="form-control" @bind="@FactoryComponentToUpdate.Rotation" /></td>
+                        <td><input id="X" name="X" type="number" class="form-control" @bind="@FactoryComponentToUpdate.X" /></td>
+                        <td><input id="Y" name="Y" type="number" class="form-control" @bind="@FactoryComponentToUpdate.Y" /></td>
+                        <td><button name="submit" type="submit" class="btn btn-primary" @onclick="@UpdateFactoryComponent">Save</button></td>
+                        <td></td>
+                    </tr>       
+                }
+                else
+                {
+                    <tr>
+                        <th scope="row">@component.Id</th>
+                        <td>@component.Name</td>
+                        <td>@component.ImageFilePath</td>
+                        <td>@component.Height</td>
+                        <td>@component.Width</td>
+                        <td>@component.Rotation</td>
+                        <td>@component.X</td>
+                        <td>@component.Y</td>
+                        <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(component)">Edit</button></td>
+                        <td></td>
+                    </tr>   
+                }
+            }
         }
             </tbody>
         </table>
