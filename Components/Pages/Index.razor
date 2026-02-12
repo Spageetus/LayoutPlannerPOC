@@ -74,7 +74,7 @@ else
     </div>
 
     
-    @if(@FactoryComponents2 is not null && @FactoryComponents2.Count > 0)
+    @if(FactoryComponents is not null && FactoryComponents.Count > 0)
     {
         <h3>Test</h3>
         // display
@@ -96,7 +96,7 @@ else
                 </thead>
             <tbody>
 
-        @foreach (var component in @FactoryComponents2)
+        @foreach (var component in FactoryComponents)
         {
             @if(!@ShowEdit)
             {
@@ -110,7 +110,7 @@ else
                     <td>@component.X</td>
                     <td>@component.Y</td>
                     <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(component)">Edit</button></td>
-                    <td></td>
+                    <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => DeleteFactoryComponent(component)">Delete</button></td>
                 </tr>       
             }
             else
@@ -127,7 +127,7 @@ else
                         <td><input id="X" name="X" type="number" class="form-control" @bind="@FactoryComponentToUpdate.X" /></td>
                         <td><input id="Y" name="Y" type="number" class="form-control" @bind="@FactoryComponentToUpdate.Y" /></td>
                         <td><button name="submit" type="submit" class="btn btn-primary" @onclick="@UpdateFactoryComponent">Save</button></td>
-                        <td></td>
+                        
                     </tr>       
                 }
                 else
@@ -142,7 +142,7 @@ else
                         <td>@component.X</td>
                         <td>@component.Y</td>
                         <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => ShowEditForm(component)">Edit</button></td>
-                        <td></td>
+                        <td><button name="submit" type="submit" class="btn btn-primary" @onclick="() => DeleteFactoryComponent(component)">Delete</button></td>
                     </tr>   
                 }
             }
@@ -154,13 +154,13 @@ else
     }
     else
     {
-        @if(FactoryComponents2 is null)
+        @if(FactoryComponents is null)
         {
             <h3>Factory Components is null</h3>
         }
         else
         {
-            <h3>Factory Component count: @FactoryComponents2.Count</h3>
+            <h3>Factory Component count: @FactoryComponents.Count</h3>
         }
     }
 }

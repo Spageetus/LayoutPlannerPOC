@@ -15,7 +15,7 @@ namespace LayoutPlannerPOC.Components.Pages
         private FactoryComponentContext? _context;
         public FactoryComponent? NewFactoryComponent { get; set; }
 
-        public List<FactoryComponent>? FactoryComponents2 { get; set; }
+        public List<FactoryComponent>? FactoryComponents { get; set; }
 
         public FactoryComponent? FactoryComponentToUpdate { get; set; }
 
@@ -62,7 +62,7 @@ namespace LayoutPlannerPOC.Components.Pages
             {
                 Console.WriteLine("Context is not null when calling ShowFactoryComponents");
                 
-                FactoryComponents2 = await _context.FactoryComponents.ToListAsync();
+                FactoryComponents = await _context.FactoryComponents.ToListAsync();
             }
 
             if (_context is not null) await DisposeAsync(); //sometimes ive seen this throw an error...  
@@ -89,9 +89,21 @@ namespace LayoutPlannerPOC.Components.Pages
                 await DisposeAsync();
             }
             ShowEdit = false;
-            await ShowFactoryComponents(); //TODO: maybe remove?
+            await ShowFactoryComponents(); //make sure to show the factory components again
         }
 
-        
+        //---------------Delete--------------///
+
+        public async Task DeleteFactoryComponent(FactoryComponent ourFactoryComponent)
+        {
+            _context ??= await FactoryComponentContextFactory.CreateDbContextAsync();
+            if (_context is not null)
+            {
+                if (ourFactoryComponent is not null) _context.FactoryComponents.Remove(ourFactoryComponent);
+                await _context.SaveChangesAsync();
+                await DisposeAsync();
+                await ShowFactoryComponents();
+            }
+        }
     }
 }
