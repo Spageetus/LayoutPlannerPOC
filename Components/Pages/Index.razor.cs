@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
+
+
 namespace LayoutPlannerPOC.Components.Pages
 {
-    public partial class Index
+    public partial class Index : IAsyncDisposable 
     {
         public bool ShowCreate {  get; set; }
         
@@ -36,6 +38,7 @@ namespace LayoutPlannerPOC.Components.Pages
 
 
             ShowCreate = false;
+            await ShowFactoryComponents();
         }
 
         public async Task ShowFactoryComponents()
@@ -49,7 +52,13 @@ namespace LayoutPlannerPOC.Components.Pages
                 FactoryComponents2 = await _context.FactoryComponents.ToListAsync();
             }
 
-            if (_context is not null) await _context.DisposeAsync();
+            if (_context is not null) await DisposeAsync(); //this code throws an error saying 
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if(_context is not null) await _context.DisposeAsync();
+            _context = null;
         }
     }
 }
