@@ -1,0 +1,22 @@
+﻿
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+    background-color: #eee;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: left;
+    border: 1px solid black;
+    outline: none;
+    --transition: 0.4s;
+    border-top: none;
+    
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+    padding: 0;
+    background-color: white;
+    overflow-x: clip;
+}

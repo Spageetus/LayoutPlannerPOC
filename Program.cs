@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 using LayoutPlannerPOC.Components;
+using LayoutPlannerPOC;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ComponentDB");
@@ -12,6 +13,8 @@ var connectionString = builder.Configuration.GetConnectionString("ComponentDB");
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddDbContextFactory<FactoryComponentContext>(options => options.UseSqlite(connectionString));
+//adding state manager singleton
+builder.Services.AddSingleton<LayoutPlannerPOC.StateManager>();
 
 var app = builder.Build();
 

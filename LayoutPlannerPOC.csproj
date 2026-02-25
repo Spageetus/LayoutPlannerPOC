@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\Assets\test_svg_blue.svg" />
+    <None Include="wwwroot\Assets\test_svg_green.svg" />
+    <None Include="wwwroot\Assets\test_svg_purple.svg" />
+    <None Include="wwwroot\Assets\test_svg_red.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Blazor.Extensions.Canvas" Version="1.1.1" />
     <PackageReference Include="Excubo.Blazor.Canvas" Version="3.2.96" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.2">

@@ -1,0 +1,31 @@
+﻿<button class="accordion" @onclick="ToggleVisibility">@Label</button>
+@if (isOpen)
+{
+    
+    <div class="panel">
+        @ChildContent
+        @if(ChildContent is null)
+        {
+            <div>Category contains no items</div>
+        }
+    </div>
+
+}
+
+
+@code
+{
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    [Parameter]
+    public required string Label { get; set; } = "Unnamed Category";
+
+
+    private bool isOpen { get; set; } = false;
+
+    private void ToggleVisibility()
+    {
+        this.isOpen = !this.isOpen;
+    }
+}

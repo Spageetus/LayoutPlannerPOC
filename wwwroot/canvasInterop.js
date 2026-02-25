@@ -105,6 +105,15 @@
         console.log("Drawing Components...");
         for (let c of this.components) {
             console.log(c);
+            if (c.color == "blue") {
+                const img = new Image(100, 100);
+                img.src = "../Assets/constructor.svg";
+                //ctx.rotate(10);
+                
+                ctx.drawImage(img, c.cellX * cellSize, c.cellY * cellSize);
+                //ctx.rotate(0);
+                continue;
+            }
             ctx.fillStyle = c.color;
             ctx.fillRect(c.cellX * cellSize, c.cellY * cellSize, cellSize * c.width, cellSize * c.height);
         }

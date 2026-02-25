@@ -1,5 +1,8 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@inject LayoutPlannerPOC.StateManager sm
+
+
 <PageTitle>Satisfactory Layout Planner</PageTitle>
 
 <section id="activity-section">
@@ -39,14 +42,35 @@
     </button>
 </section>
 <ComponentBrowser SelectedColor="@selectedColor">
-    <ComponentButton Color="blue" OnSelect="HandleSelect"></ComponentButton>
-    <ComponentButton Color="red" OnSelect="HandleSelect"></ComponentButton>
-    <ComponentButton Color="green" OnSelect="HandleSelect"></ComponentButton>
-    <ComponentButton Color="purple" OnSelect="HandleSelect"></ComponentButton>
-    <ComponentButton Color="yellow" OnSelect="HandleSelect"></ComponentButton>
+    <ComponentCategory Label="Special">
+        <FactoryComponentButton Label="The Hub"/>
+        <FactoryComponentButton Label="AWESOME Sink"/>
+    </ComponentCategory>
+
+    <ComponentCategory Label="Manufacturers">
+        <FactoryComponentButton Label="Constructor" />
+        <FactoryComponentButton Label="Assembler" />
+        <FactoryComponentButton Label="Manufacturer" />
+        <FactoryComponentButton Label="Packager" />
+        <FactoryComponentButton Label="Refinery" />
+        <FactoryComponentButton Label="Blender" />
+        <FactoryComponentButton Label="Particle Accelerator" />
+        <FactoryComponentButton Label="Converter" />
+    </ComponentCategory>
+
+    <ComponentCategory Label="Smelters">
+        <FactoryComponentButton Label="Smelter" />
+        <FactoryComponentButton Label="Foundry" />
+    </ComponentCategory>
+
+    <ComponentCategory Label="Miners">
+        <FactoryComponentButton Label="Miner" />
+    </ComponentCategory>
 </ComponentBrowser>
 <InputModal></InputModal>
 @code{
+    
+    
     private string selectedColor = "None";
 
     private void HandleSelect(string color)

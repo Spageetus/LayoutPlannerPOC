@@ -8,7 +8,7 @@
 
 
     private ElementReference _canvasReference;
-    
+
     private int cellSize = 20;
 
     private Random rand = new Random();
@@ -37,6 +37,8 @@
 
     private async Task HandleCanvasClick(MouseEventArgs e)
     {
+        Console.WriteLine("Placing component: " + StateManager.GetSelectedComponentType());
+
         _clickX = Math.Truncate(e.OffsetX / cellSize);
         _clickY = Math.Truncate(e.OffsetY / cellSize);
         if (SelectedColor.Equals("none"))

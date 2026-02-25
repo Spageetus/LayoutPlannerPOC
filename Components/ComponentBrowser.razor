@@ -1,19 +1,21 @@
 ﻿@inject IJSRuntime JSRuntime
 
+
 <aside id="component-browser">
-    <h2 style="align-self:center">Components</h2>
-    <button @onclick="ExportDesign">Export to string</button>
-    <button @onclick="ImportDesign">Import from string</button>
-    <p>Selected: @SelectedColor</p>
-    @ChildContent
+    <div class="header">
+        <h2>Component Browser</h2>
+    </div>
+    <div id="browser-div">
+        @ChildContent
+    </div>
 </aside>
 
 @code {
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public required RenderFragment ChildContent { get; set; }
 
-    [Parameter] 
-    public string SelectedColor { get; set; }
+    [Parameter]
+    public string SelectedColor { get; set; } = "None";
 
     async public void ExportDesign()
     {

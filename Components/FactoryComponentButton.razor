@@ -1,0 +1,44 @@
+﻿@inject StateManager sm
+
+<button @onclick="handleClick" class="component-button">
+    <!-- onerror will automatically set the icons source to a placeholder image if the source file cannot be found --> <!--     -->
+    <img class="component-button-icon" src="@IconSrc" onerror="this.onerror=null; this.src='../assets/icons/image-placeholder.svg';" />
+    @Label
+</button>
+
+@code {
+    [Parameter]
+    public string Label { get; set; } = "undefined";
+
+    [Parameter]
+    public string StoredComponentString { get; set; } = "none";
+
+    //default icon is a placeholder
+    private string IconSrc { get; set; } = "../assets/icons/image-placeholder.svg";
+
+
+
+    private async Task handleClick()
+    {
+
+        await InvokeAsync(() =>
+        {
+            StateManager.setSelectedComponentType(StoredComponentString);
+            Console.WriteLine(StateManager.GetSelectedComponentType());
+            Console.WriteLine("Icon Image source: " + IconSrc);
+
+        });
+    }
+
+    //when the parameters for the button are set, find the components icon asset to display on the button
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        StoredComponentString = Label.ToLower().Replace(' ', '_');
+        //finds the icon asset based on the component name
+        IconSrc = "../assets/icons/" + StoredComponentString + ".webp";
+        StateHasChanged();
+
+    }
+
+}
