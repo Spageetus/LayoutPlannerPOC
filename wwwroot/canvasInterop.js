@@ -1,11 +1,15 @@
 ﻿window.canvasInterop = {
-
-    width: Number, 
-    height: Number,
-    cellSize: Number,
+    //width: Number, 
+    //height: Number,
+    //cellSize: Number,
     ctx: any = undefined,
     canvas: any = undefined,
     components: any = [],
+    //top: Number,
+    //bottom: Number,
+    //left: Number,
+    //right: Number,
+    
 
     setupCanvas: function (canvasElement, _cellSize) {
         if (!canvasElement) {
@@ -18,10 +22,16 @@
         canvasElement.width = canvasElement.clientWidth;
         canvasElement.height = canvasElement.clientHeight;
 
+        //update the dimension variables
+        canvasDimensions.top = 0;
+        canvasDimensions.bottom = canvasElement.height;
+        canvasDimensions.left = 0;
+        canvasDimensions.right = canvasElement.width;
+        canvasDimensions.width = canvasElement.width;
+        canvasDimensions.height = canvasElement.height;
+
         //setup variables for drawing on the canvas
-        width = canvasElement.width;
-        height = canvasElement.height;
-        cellSize = _cellSize;
+        canvasDimensions.cellSize = _cellSize;
         
     },
 
@@ -34,29 +44,29 @@
         //console.log("Drawing grid...");
         let currX = 0;
         let currY = 0;
-        let columns = Math.trunc(width / cellSize) +1;
-        let rows = Math.trunc(height / cellSize) +1;
+        let columns = Math.trunc(canvasDimensions.width / canvasDimensions.cellSize) +1;
+        let rows = Math.trunc(canvasDimensions.height / canvasDimensions.cellSize) +1;
 
-        ctx.lineWidth = 0.5;
+        ctx.linewidth = 0.5;
         ctx.fillStyle = "black";
         ctx.beginPath();
         //draw vertical lines
-        //TODO: Increase width of every 8th grid line (size of foundations)
+        //TODO: Increase canvasDimensions.width of every 8th grid line (size of foundations)
         for (let i = 0; i < columns; i++) {
-            currX += cellSize;
+            currX += canvasDimensions.cellSize;
             currY = 0;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, height);
+            ctx.lineTo(currX, canvasDimensions.height);
         }
         ctx.stroke();
         currX = 0;
         currY = 0;
         //draw horizontal lines
         for (let i = 0; i < rows; i++) {
-            currY += cellSize;
+            currY += canvasDimensions.cellSize;
             currX = 0;
             ctx.moveTo(currX, currY);
-            ctx.lineTo(width, currY);
+            ctx.lineTo(canvasDimensions.width, currY);
         }
         ctx.stroke();
 
@@ -80,18 +90,19 @@
     redraw: function () {
         //console.log("redrawing canvas");
         window.canvasInterop.clearCanvas();
+
+        ctx.translate(width / 2, height / 2);
+        console.log(ctx.getTransform());
+
         window.canvasInterop.drawGrid();
         window.canvasInterop.drawComponents();
-
+        ctx.fillRect(0, 0, 20, 20);
+        
     },
 
 
     addComponent: function(newComponent) {
         this.components.push(newComponent);
-        console.log("Current components:");
-        for (let c of this.components) {
-            console.log(c);
-        }
     },
 
     setComponents: function (componentsList) {
@@ -100,23 +111,47 @@
     },
 
     drawComponents: function () {
-        if (!ctx) return;
-        ctx.globalAlpha = 0.8;
+        console.log("   ");
         console.log("Drawing Components...");
+        if (!ctx) return;
         for (let c of this.components) {
-            console.log(c);
-            if (c.color == "blue") {
-                const img = new Image(100, 100);
-                img.src = "../Assets/constructor.svg";
-                //ctx.rotate(10);
+            console.log("Drawing component: " + c.name);
+            //if component does not have an SVG image asset: draw one manually
+            if (!c.imageFilePath) {
+                console.log("Component does not have a custom SVG")
+                //fill inside of component
+                ctx.fillStyle = "grey";
+                ctx.fillRect(c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize, c.height * canvasDimensions.cellSize);
                 
-                ctx.drawImage(img, c.cellX * cellSize, c.cellY * cellSize);
-                //ctx.rotate(0);
-                continue;
+
+                //write name of component
+                ctx.fillStyle = "white";
+                ctx.font = "30px sans-serif";
+                ctx.fillText(c.name, c.x * canvasDimensions.cellSize, (c.y + c.height / 2) * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize);
+                ctx.fillStyle = "black";
+
+                //draw outline of component
+                ctx.strokeRect(c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize, c.height * canvasDimensions.cellSize);
+                continue;    
             }
-            ctx.fillStyle = c.color;
-            ctx.fillRect(c.cellX * cellSize, c.cellY * cellSize, cellSize * c.width, cellSize * c.height);
+            console.log("Drawing component's SVG...")
+            //draw image from file
+            const img = new Image(100, 100);
+
+            //altering stored link so the JS can access it
+            img.src = c.imageFilePath.replace("\\", "/").replace("wwwroot/", "");
+            ctx.drawImage(img, c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize);            
         }
-        ctx.globalAlpha = 1;
+        console.log("Finished drawing components");
     }
 };
+
+canvasDimensions = {
+    width: Number,
+    height: Number,
+    top: Number,
+    bottom: Number,
+    left: Number,
+    right: Number,
+    cellSize: Number
+}

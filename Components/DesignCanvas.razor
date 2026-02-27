@@ -3,15 +3,10 @@
 <canvas @ref="_canvasReference" @onclick="HandleCanvasClick" id="design-canvas">I am the main canvas</canvas>
 
 @code {
-    [Parameter]
-    public string SelectedColor { get; set; } = "none";
-
 
     private ElementReference _canvasReference;
 
     private int cellSize = 20;
-
-    private Random rand = new Random();
 
 
     private double _clickX;
@@ -23,9 +18,8 @@
         if (firstRender)
         {
             await JSRuntime.InvokeVoidAsync("canvasInterop.setupCanvas", _canvasReference, cellSize);
-            SelectedColor = "none";
+            await Redraw();
         }
-        await Redraw();
     }
 
 
@@ -38,24 +32,18 @@
     private async Task HandleCanvasClick(MouseEventArgs e)
     {
         Console.WriteLine("Placing component: " + StateManager.GetSelectedComponentType());
+        string componentName = StateManager.GetSelectedComponentType();
+
+        Data.FactoryComponent? c = Data.FactoryComponent.CreateFromName(componentName);
+        if (c is null) return;
+
 
         _clickX = Math.Truncate(e.OffsetX / cellSize);
         _clickY = Math.Truncate(e.OffsetY / cellSize);
-        if (SelectedColor.Equals("none"))
-        {
-            await JSRuntime.InvokeVoidAsync("logString", "Selected Color is \"none\"");
-            return;
-        }
-        var c = new ComponentNode(SelectedColor);
-        c.CellX = _clickX;
-        c.CellY = _clickY;
 
-        c.width = rand.Next(1, 10);
-        c.height = rand.Next(1, 10);
+        c.SetLocation((int)_clickX, (int)_clickY);
 
         await JSRuntime.InvokeVoidAsync("canvasInterop.addComponent", c);
-        //_clickX = e.OffsetX;
-        //_clickY = e.OffsetY;
-        await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
+        await Redraw();
     }
 }

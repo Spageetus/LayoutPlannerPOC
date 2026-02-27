@@ -1,60 +1,107 @@
-﻿using System.Numerics;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 
 namespace LayoutPlannerPOC.Data
 {
+    public enum Rotations
+    {
+        None = 0,
+        D90 = 1,
+        D180 = 2,
+        D270 = 3,
+        D360 = 0
+    }
+
     public class FactoryComponent
     {
         public int Id  { get; set; }
         public string? Name { get; set; }
         public string? ImageFilePath { get; set; }
-        public int? Height { get; set; }
-        public int? Width { get; set; }
-        public int? Rotation { get; set; }
+        public int? Height { get; set; } = 1;
+        public int? Width { get; set; } = 1;
+        public  Rotations Rotation { get; set; } = 0;
         public int? X { get; set; }
         public int? Y { get; set; }
         public FactoryComponent() { }
-        public FactoryComponent(string name)
+
+        public void SetLocation(int x, int y)
         {
+            this.X = x;
+            this.Y = y;
+        }
+
+        public void SetSize(int width, int height)
+        {
+            this.Width = width;
+            this.Height = height;
+        }
+        
+        public static FactoryComponent? CreateFromName(string name)
+        {
+            FactoryComponent component = new FactoryComponent();
+            component.Name = name;
             switch (name)
             {
-                case ("blue"): 
-                    this.ImageFilePath = "..\\Assets\\test_svg_blue.svg";
-                    this.Height = 1;
-                    this.Width = 1;
-                    this.Rotation = 0;
+                case ("the_hub"):
+                    component.SetSize(14, 26);
                     break;
-                case ("red"):
-                    this.ImageFilePath = "..\\Assets\\test_svg_red.svg";
-                    this.Height = 1;
-                    this.Width = 1;
-                    this.Rotation = 0;
+                case ("awesome_sink"):
+                    component.SetSize(16, 13);
                     break;
-                case ("green"):
-                    this.ImageFilePath = "..\\Assets\\test_svg_green.svg";
-                    this.Height = 1;
-                    this.Width = 1;
-                    this.Rotation = 0;
+                case ("constructor"):
+                    component.SetSize(8, 10);
                     break;
-                case ("purple"):
-                    this.ImageFilePath = "..\\Assets\\test_svg_purple.svg";
-                    this.Height = 1;
-                    this.Width = 1;
-                    this.Rotation = 0;
+                case ("smelter"):
+                    component.SetSize(6, 9);
                     break;
-                case ("yellow"):
-                    this.ImageFilePath = "..\\Assets\\test_svg_yellow.svg";
-                    this.Height = 1;
-                    this.Width = 1;
-                    this.Rotation = 0;
+                case ("assembler"):
+                    component.SetSize(10, 15);
                     break;
+                case ("manufacturer"):
+                    component.SetSize(18, 20);
+                    break;
+                case ("packager"):
+                    component.SetSize(8, 8);
+                    break;
+                case ("blender"):
+                    component.SetSize(18, 16);
+                    break;
+                case ("particle_accelerator"):
+                    component.SetSize(24, 38);
+                    break;
+                case ("converter"):
+                    return null;
+                case ("foundry"):
+                    component.SetSize(10, 9);
+                    break;
+                case ("miner"):
+                    component.SetSize(6, 14);
+                    break;
+                
                 default:
-
-                    break;
+                    return null;
             }
+
+            component.ImageFilePath = FactoryComponent.FindComponentFilePath(name, 0);
+            return component;
 
         }
 
-        
+        private static string? FindComponentFilePath(string name, int rotation)
+        {
+            string svgFilePath = "wwwroot\\Assets\\ComponentGraphics\\" + name + rotation + ".svg";
+            svgFilePath = $"wwwroot\\Assets\\ComponentGraphics\\{name}\\{name + rotation}.svg";
+            Console.WriteLine(svgFilePath);
+            if (System.IO.File.Exists(svgFilePath))
+            {
+                Console.WriteLine("SVG File found");
+                return svgFilePath;
+            }
+            Console.WriteLine("Could not find SVG File: " + svgFilePath);
+            return null;
+        }
+
+
     }
 }
 

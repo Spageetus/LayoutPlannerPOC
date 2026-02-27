@@ -23,10 +23,8 @@
 
         await InvokeAsync(() =>
         {
+            //tell the state manager to update the selected component type
             StateManager.setSelectedComponentType(StoredComponentString);
-            Console.WriteLine(StateManager.GetSelectedComponentType());
-            Console.WriteLine("Icon Image source: " + IconSrc);
-
         });
     }
 

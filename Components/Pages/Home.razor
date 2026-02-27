@@ -6,8 +6,7 @@
 <PageTitle>Satisfactory Layout Planner</PageTitle>
 
 <section id="activity-section">
-    <DesignCanvas SelectedColor="@selectedColor"></DesignCanvas>
-    
+    <DesignCanvas/>
 </section>
 <section id="toolbar">
     <button class="hotbar-button">
@@ -41,7 +40,7 @@
         0
     </button>
 </section>
-<ComponentBrowser SelectedColor="@selectedColor">
+<ComponentBrowser>
     <ComponentCategory Label="Special">
         <FactoryComponentButton Label="The Hub"/>
         <FactoryComponentButton Label="AWESOME Sink"/>
@@ -67,17 +66,16 @@
         <FactoryComponentButton Label="Miner" />
     </ComponentCategory>
 </ComponentBrowser>
-<InputModal></InputModal>
 @code{
     
     
-    private string selectedColor = "None";
+    // private string selectedColor = "None";
 
-    private void HandleSelect(string color)
-    {
-        selectedColor = color;
-        StateHasChanged();
-        Console.WriteLine($"Button clicked: {color}");
-    }
+    // private void HandleSelect(string color)
+    // {
+    //     selectedColor = color;
+    //     StateHasChanged();
+    //     Console.WriteLine($"Button clicked: {color}");
+    // }
 
 }

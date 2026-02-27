@@ -1,5 +1,7 @@
 ﻿using LayoutPlannerPOC.Components;
 using LayoutPlannerPOC.Data;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.Swift;
 
 namespace LayoutPlannerPOC
 {
@@ -12,7 +14,7 @@ namespace LayoutPlannerPOC
 
         private static List<FactoryComponent> _componentsList = new List<FactoryComponent>();
 
-        private static string? _selectedComponentType = "none"; //stores the name of the component that has been selected via hotkeys or component browser.
+        private static string _selectedComponentType = "none"; //stores the name of the component that has been selected via hotkeys or component browser.
 
         private static FactoryComponent? heldComponent = null;
 
@@ -23,13 +25,26 @@ namespace LayoutPlannerPOC
         public static void setSelectedComponentType(string selectedComponentType)
         {
             if(selectedComponentType == null) selectedComponentType = "none";
+
             StateManager._selectedComponentType = selectedComponentType;
         }
 
-        public static string? GetSelectedComponentType()
+        public static string GetSelectedComponentType()
         {
             return StateManager._selectedComponentType;
         }
+
+        public static FactoryComponent? GetHeldComponent()
+        {
+            return heldComponent;
+        }
+
+        public static List<FactoryComponent> GetFactoryComponents()
+        {
+            return _componentsList;
+        }
+
+        
 
 
 
