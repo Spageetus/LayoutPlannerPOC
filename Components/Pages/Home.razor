@@ -76,7 +76,7 @@
     {
         //Console.WriteLine($"Key pressed: {e.Key}");  
 
-        switch(e.Key)
+        switch (e.Key)
         {
             //panning movements (WASD)
             case ("w"):
@@ -88,11 +88,11 @@
             case ("s"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.panDown");
                 break;
-            case("d"):
+            case ("d"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.panRight");
                 break;
             //panning movements (arrow keys)
-            case("ArrowUp"):
+            case ("ArrowUp"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.panUp");
                 break;
             case ("ArrowDown"):
@@ -106,18 +106,9 @@
                 break;
 
             //return home (H)
-            case("h"):
+            case ("h"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.goHome");
                 break;
         }
     }
-    // private string selectedColor = "None";
-
-    // private void HandleSelect(string color)
-    // {
-    //     selectedColor = color;
-    //     StateHasChanged();
-    //     Console.WriteLine($"Button clicked: {color}");
-    // }
-
 }

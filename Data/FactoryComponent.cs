@@ -63,6 +63,9 @@ namespace LayoutPlannerPOC.Data
                 case ("packager"):
                     component.SetSize(8, 8);
                     break;
+                case ("refinery"):
+                    component.SetSize(10, 22);
+                    break;
                 case ("blender"):
                     component.SetSize(18, 16);
                     break;
@@ -70,7 +73,8 @@ namespace LayoutPlannerPOC.Data
                     component.SetSize(24, 38);
                     break;
                 case ("converter"):
-                    return null;
+                    component.SetSize(16, 16);
+                    break;
                 case ("foundry"):
                     component.SetSize(10, 9);
                     break;
