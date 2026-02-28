@@ -74,22 +74,38 @@
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        //Console.WriteLine($"Key pressed: {e.Key}");
+        //Console.WriteLine($"Key pressed: {e.Key}");  
 
         switch(e.Key)
         {
+            //panning movements (WASD)
             case ("w"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.panUp");
+                break;
+            case ("a"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panLeft");
                 break;
             case ("s"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.panDown");
                 break;
-            case("a"):
-                await JSRuntime.InvokeVoidAsync("canvasInterop.panLeft");
-                break;
             case("d"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.panRight");
                 break;
+            //panning movements (arrow keys)
+            case("ArrowUp"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panUp");
+                break;
+            case ("ArrowDown"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panDown");
+                break;
+            case ("ArrowLeft"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panLeft");
+                break;
+            case ("ArrowRight"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panRight");
+                break;
+
+            //return home (H)
             case("h"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.goHome");
                 break;
