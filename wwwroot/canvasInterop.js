@@ -10,6 +10,7 @@
     //left: Number,
     //right: Number,
     
+    
 
     setupCanvas: function (canvasElement, _cellSize) {
         if (!canvasElement) {
@@ -32,6 +33,10 @@
 
         //setup variables for drawing on the canvas
         canvasDimensions.cellSize = _cellSize;
+
+        this.translate(canvasDimensions.width / 2, canvasDimensions.height / 2);
+
+        
         
     },
 
@@ -43,6 +48,7 @@
         }
         //console.log("Drawing grid...");
         let currX = 0;
+        currX = Math.trunc(canvasDimensions.left/canvasDimensions.cellSize) * canvasDimensions.cellSize;
         let currY = 0;
         let columns = Math.trunc(canvasDimensions.width / canvasDimensions.cellSize) +1;
         let rows = Math.trunc(canvasDimensions.height / canvasDimensions.cellSize) +1;
@@ -53,20 +59,22 @@
         //draw vertical lines
         //TODO: Increase canvasDimensions.width of every 8th grid line (size of foundations)
         for (let i = 0; i < columns; i++) {
-            currX += canvasDimensions.cellSize;
+            
             currY = 0;
-            ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, canvasDimensions.height);
+            ctx.moveTo(currX, canvasDimensions.top);
+            ctx.lineTo(currX, canvasDimensions.bottom);
+            currX += canvasDimensions.cellSize;
         }
         ctx.stroke();
         currX = 0;
-        currY = 0;
+        currY = Math.trunc(canvasDimensions.top /canvasDimensions.cellSize) * canvasDimensions.cellSize;
         //draw horizontal lines
         for (let i = 0; i < rows; i++) {
-            currY += canvasDimensions.cellSize;
+            
             currX = 0;
-            ctx.moveTo(currX, currY);
-            ctx.lineTo(canvasDimensions.width, currY);
+            ctx.moveTo(canvasDimensions.left, currY);
+            ctx.lineTo(canvasDimensions.right, currY);
+            currY += canvasDimensions.cellSize;
         }
         ctx.stroke();
 
@@ -82,21 +90,26 @@
         //resizing canvas clears everything on it
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        width = canvas.width;
-        height = canvas.height;
+        canvasDimensions.width = canvas.width;
+        canvasDimensions.height = canvas.height;
         //console.log("Clearing canvas...");
     },
 
     redraw: function () {
         //console.log("redrawing canvas");
         window.canvasInterop.clearCanvas();
-
-        ctx.translate(width / 2, height / 2);
-        console.log(ctx.getTransform());
-
+        ctx.setTransform(canvasDimensions.tMatrix);
         window.canvasInterop.drawGrid();
         window.canvasInterop.drawComponents();
-        ctx.fillRect(0, 0, 20, 20);
+
+        //Drawing a square around 0, 0
+        ctx.fillRect(canvasDimensions.left, canvasDimensions.top, 20, 20); //TEST LINE
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.strokeRect(-20, -20, 40, 40);
+
+        ctx.fillStyle = "black";
+        console.log(canvasDimensions.tMatrix);
         
     },
 
@@ -143,6 +156,67 @@
             ctx.drawImage(img, c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize);            
         }
         console.log("Finished drawing components");
+    },
+
+    panUp: function () {
+        console.log("panning up");
+        this.translate(0, -32);
+        this.redraw();
+    },
+
+    panDown: function () {
+        console.log("panning down");
+        this.translate(0, 32);
+        this.redraw();
+    },
+
+    panLeft: function () {
+        console.log("panning left");
+        this.translate(-32, 0);
+        this.redraw();
+    },
+
+    panRight: function () {
+        console.log("panning right");
+        this.translate(32, 0);
+        this.redraw();
+    },
+
+    goHome: function () {
+        this.resetTransform();
+    },
+
+    translate: function(x, y) {
+        ctx.translate(x, y);
+        this.updateDimensions(ctx.getTransform());
+    },
+
+    resetTransform: function () {
+        ctx.setTransform(1, 0, 0, 1, canvasDimensions.width/2, canvasDimensions.height/2);
+        this.updateDimensions(ctx.getTransform());
+        this.redraw();
+    },
+
+    updateDimensions: function (transformMatrix) {
+        //store transformation matrix
+        canvasDimensions.tMatrix = transformMatrix;
+
+        canvasDimensions.width = canvas.clientWidth;
+        canvasDimensions.height = canvas.clientHeight;
+
+        //update sides
+        canvasDimensions.top = canvasDimensions.tMatrix.f * -1;
+        canvasDimensions.bottom = canvasDimensions.top + canvasDimensions.height;
+
+        canvasDimensions.left = canvasDimensions.tMatrix.e * -1;
+        canvasDimensions.right = canvasDimensions.left + canvasDimensions.width;
+
+        console.log("Updated dimensions:");
+        console.log(canvasDimensions);
+
+        //sending the canvas top and left data to the Design Canvas so it can determine click locations accurately.
+        DotNet.invokeMethodAsync("LayoutPlannerPOC", "SetCanvasTop", canvasDimensions.top);
+        DotNet.invokeMethodAsync("LayoutPlannerPOC", "SetCanvasLeft", canvasDimensions.left);
     }
 };
 
@@ -153,5 +227,16 @@ canvasDimensions = {
     bottom: Number,
     left: Number,
     right: Number,
-    cellSize: Number
+    cellSize: Number,
+    tMatrix: DOMMatrix
+    /*
+        tMatrix parameters:
+        a - horizontal scale
+        b - horizontal skew (NOT USING)
+        c - vertical skew (NOT USING) 
+        d - vertical scale
+        e - horizontal offset
+        f - vertical offset
+    */
+
 }

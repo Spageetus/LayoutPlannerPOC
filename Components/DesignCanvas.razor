@@ -1,6 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 
-<canvas @ref="_canvasReference" @onclick="HandleCanvasClick" id="design-canvas">I am the main canvas</canvas>
+<canvas @ref="_canvasReference" @onclick="HandleCanvasClick" @ id="design-canvas" tabindex="0">I am the main canvas</canvas>
 
 @code {
 
@@ -11,6 +11,9 @@
 
     private double _clickX;
     private double _clickY;
+
+    private static double canvasTop = 0; //making these variables static so I can set them using the JSInvokeable functions
+    private static double canvasLeft = 0;
 
     //sets up canvas for the first time (if necessary), then draws canvas
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -38,12 +41,33 @@
         if (c is null) return;
 
 
-        _clickX = Math.Truncate(e.OffsetX / cellSize);
-        _clickY = Math.Truncate(e.OffsetY / cellSize);
+
+        _clickX = Math.Truncate((e.OffsetX + canvasLeft) / cellSize);
+        if (_clickX < 0) _clickX--; //adjusting for slight offset when x < 0
+        _clickY = Math.Truncate((e.OffsetY + canvasTop)/ cellSize);
+        if (_clickY < 0) _clickY--; //adjusting for slight offset when y < 0
 
         c.SetLocation((int)_clickX, (int)_clickY);
+
+        //await JSRuntime.InvokeVoidAsync("canvasInterop.resetTransform");
 
         await JSRuntime.InvokeVoidAsync("canvasInterop.addComponent", c);
         await Redraw();
     }
+
+    [JSInvokable]
+    public static void SetCanvasTop(double value)
+    {
+        canvasTop = value;
+        Console.WriteLine("Recieved Canvas Top from JSInterop: " + value);
+
+    }
+
+    [JSInvokable]
+    public static void SetCanvasLeft(double value)
+    {
+        Console.WriteLine("Recieved Canvas Left from JSInterop: " + value);
+        canvasLeft = value;
+    }
+
 }

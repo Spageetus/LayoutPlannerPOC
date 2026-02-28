@@ -1,11 +1,15 @@
 ﻿@page "/"
+@using System.Threading.Tasks
 @rendermode InteractiveServer
 @inject LayoutPlannerPOC.StateManager sm
+@inject IJSRuntime JSRuntime
 
 
 <PageTitle>Satisfactory Layout Planner</PageTitle>
+<div id="everything">
 
-<section id="activity-section">
+</div>
+<section id="activity-section" @onkeydown="HandleKeyDown">
     <DesignCanvas/>
 </section>
 <section id="toolbar">
@@ -67,8 +71,30 @@
     </ComponentCategory>
 </ComponentBrowser>
 @code{
-    
-    
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        //Console.WriteLine($"Key pressed: {e.Key}");
+
+        switch(e.Key)
+        {
+            case ("w"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panUp");
+                break;
+            case ("s"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panDown");
+                break;
+            case("a"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panLeft");
+                break;
+            case("d"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panRight");
+                break;
+            case("h"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.goHome");
+                break;
+        }
+    }
     // private string selectedColor = "None";
 
     // private void HandleSelect(string color)
