@@ -40,12 +40,14 @@
         Data.FactoryComponent? c = Data.FactoryComponent.CreateFromName(componentName);
         if (c is null) return;
 
+        double canvasClickX = e.OffsetX + canvasLeft;
+        if (canvasClickX < 0) canvasClickX -= cellSize; //slight adjustment to fix offset for clicks where x < 0
+        double canvasClickY = e.OffsetY + canvasTop;
+        if (canvasClickY < 0) canvasClickY -= cellSize; //slight adjustment to fix offset for clicks where y < 0
 
-
-        _clickX = Math.Truncate((e.OffsetX + canvasLeft) / cellSize);
-        if (_clickX < 0) _clickX--; //adjusting for slight offset when x < 0
-        _clickY = Math.Truncate((e.OffsetY + canvasTop)/ cellSize);
-        if (_clickY < 0) _clickY--; //adjusting for slight offset when y < 0
+        _clickX = Math.Truncate(canvasClickX / cellSize);
+        _clickY = Math.Truncate(canvasClickY/ cellSize);
+        
 
         c.SetLocation((int)_clickX, (int)_clickY);
 
