@@ -6,9 +6,6 @@
 
 
 <PageTitle>Satisfactory Layout Planner</PageTitle>
-<div id="everything">
-
-</div>
 <section id="activity-section" @onkeydown="HandleKeyDown">
     <DesignCanvas/>
 </section>
@@ -50,6 +47,7 @@
         <FactoryComponentButton Label="Miner" />
     </ComponentCategory>
 </ComponentBrowser>
+
 @code{
 
     private async Task HandleKeyDown(KeyboardEventArgs e)

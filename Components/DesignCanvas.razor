@@ -1,7 +1,6 @@
 ﻿@inject IJSRuntime JSRuntime
 
 <canvas @ref="_canvasReference" @onclick="HandleCanvasClick" @ id="design-canvas" tabindex="0" @oncontextmenu:preventDefault="true">I am the main canvas</canvas>
-
 @code {
 
     private ElementReference _canvasReference;
