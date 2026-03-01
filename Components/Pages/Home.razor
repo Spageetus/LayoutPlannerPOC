@@ -12,38 +12,18 @@
 <section id="activity-section" @onkeydown="HandleKeyDown">
     <DesignCanvas/>
 </section>
-<section id="toolbar">
-    <button class="hotbar-button">
-        1
-    </button>
-    <button class="hotbar-button">
-        2
-    </button>
-    <button class="hotbar-button">
-        3
-    </button>
-    <button class="hotbar-button">
-        4
-    </button>
-    <button class="hotbar-button">
-        5
-    </button>
-    <button class="hotbar-button">
-        6
-    </button>
-    <button class="hotbar-button">
-        7
-    </button>
-    <button class="hotbar-button">
-        8
-    </button>
-    <button class="hotbar-button">
-        9
-    </button>
-    <button class="hotbar-button">
-        0
-    </button>
-</section>
+<Hotbar>
+    <HotbarButton ButtonId=1/>
+    <HotbarButton ButtonId=2 />
+    <HotbarButton ButtonId=3 />
+    <HotbarButton ButtonId=4 />
+    <HotbarButton ButtonId=5 />
+    <HotbarButton ButtonId=6 />
+    <HotbarButton ButtonId=7 />
+    <HotbarButton ButtonId=8 />
+    <HotbarButton ButtonId=9 />
+    <HotbarButton ButtonId=0 />
+</Hotbar>
 <ComponentBrowser>
     <ComponentCategory Label="Special">
         <FactoryComponentButton Label="The Hub"/>
@@ -104,10 +84,11 @@
             case ("ArrowRight"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.panRight");
                 break;
-
             //return home (H)
             case ("h"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.goHome");
+                break;
+            case("1"):
                 break;
         }
     }

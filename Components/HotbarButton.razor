@@ -1,0 +1,32 @@
+﻿<button class="hotbar-button"
+        style="background-image: url(@IconSrc)"
+        @onclick="HandleClick"
+        @oncontextmenu="HandleRightClick"
+        @oncontextmenu:preventDefault="true">
+    @ButtonId
+</button>
+
+@code {
+    [Parameter]
+    public required int ButtonId { get; set; }
+
+    public string? StoredComponentType { get; set; } = null;
+
+    private string? IconSrc { get; set; } = null;
+
+    private async Task HandleClick()
+    {
+        this.StoredComponentType = StateManager.GetSelectedComponentType();
+        // this.IconSrc = StoredComponentType.ToLower().Replace(' ', '_');
+        // finds the icon asset based on the component name
+        this.IconSrc = "../assets/icons/" + StoredComponentType + ".webp";
+        StateHasChanged();
+    }
+
+    private async Task HandleRightClick()
+    {
+        this.StoredComponentType = null;
+        this.IconSrc = null;
+        Console.WriteLine($"Right Clicked Button {ButtonId}. Clearing stored component...");
+    }
+}
