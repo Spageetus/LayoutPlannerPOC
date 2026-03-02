@@ -103,7 +103,6 @@
         window.canvasInterop.drawComponents();
 
         //Drawing a square around 0, 0
-        ctx.fillRect(canvasDimensions.left, canvasDimensions.top, 20, 20); //TEST LINE
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
         ctx.strokeRect(-20, -20, 40, 40);
@@ -153,7 +152,7 @@
 
             //altering stored link so the JS can access it
             img.src = c.imageFilePath.replace("\\", "/").replace("wwwroot/", "");
-            ctx.drawImage(img, c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize);            
+            ctx.drawImage(img, c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize);
         }
         console.log("Finished drawing components");
     },

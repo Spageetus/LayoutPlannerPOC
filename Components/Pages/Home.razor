@@ -10,16 +10,17 @@
     <DesignCanvas/>
 </section>
 <Hotbar>
-    <HotbarButton ButtonId=1/>
-    <HotbarButton ButtonId=2 />
-    <HotbarButton ButtonId=3 />
-    <HotbarButton ButtonId=4 />
-    <HotbarButton ButtonId=5 />
-    <HotbarButton ButtonId=6 />
-    <HotbarButton ButtonId=7 />
-    <HotbarButton ButtonId=8 />
-    <HotbarButton ButtonId=9 />
-    <HotbarButton ButtonId=0 />
+    @* Im sure theres a better way to do this *@
+    <HotbarButton ButtonId=1 @ref="hotbarButtons[1]"/>
+    <HotbarButton ButtonId=2 @ref="hotbarButtons[2]"/>
+    <HotbarButton ButtonId=3 @ref="hotbarButtons[3]" />
+    <HotbarButton ButtonId=4 @ref="hotbarButtons[4]" />
+    <HotbarButton ButtonId=5 @ref="hotbarButtons[5]" />
+    <HotbarButton ButtonId=6 @ref="hotbarButtons[6]" />
+    <HotbarButton ButtonId=7 @ref="hotbarButtons[7]" />
+    <HotbarButton ButtonId=8 @ref="hotbarButtons[8]" />
+    <HotbarButton ButtonId=9 @ref="hotbarButtons[9]" />
+    <HotbarButton ButtonId=0 @ref="hotbarButtons[0]" />
 </Hotbar>
 <ComponentBrowser>
     <ComponentCategory Label="Special">
@@ -49,6 +50,8 @@
 </ComponentBrowser>
 
 @code{
+
+    private HotbarButton[] hotbarButtons = new HotbarButton[10];
 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
@@ -86,7 +89,39 @@
             case ("h"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.goHome");
                 break;
+            case("q"):
+                StateManager.setSelectedComponentType("none");
+                break;
+            //Hotbar keys
             case("1"):
+                StateManager.setSelectedComponentType(hotbarButtons[1].StoredComponentType);
+                break;
+            case ("2"):
+                StateManager.setSelectedComponentType(hotbarButtons[2].StoredComponentType);
+                break;
+            case ("3"):
+                StateManager.setSelectedComponentType(hotbarButtons[3].StoredComponentType);
+                break;
+            case ("4"):
+                StateManager.setSelectedComponentType(hotbarButtons[4].StoredComponentType);
+                break;
+            case ("5"):
+                StateManager.setSelectedComponentType(hotbarButtons[5].StoredComponentType);
+                break;
+            case ("6"):
+                StateManager.setSelectedComponentType(hotbarButtons[6].StoredComponentType);
+                break;
+            case ("7"):
+                StateManager.setSelectedComponentType(hotbarButtons[7].StoredComponentType);
+                break;
+            case ("8"):
+                StateManager.setSelectedComponentType(hotbarButtons[8].StoredComponentType);
+                break;
+            case ("9"):
+                StateManager.setSelectedComponentType(hotbarButtons[9].StoredComponentType);
+                break;
+            case ("0"):
+                StateManager.setSelectedComponentType(hotbarButtons[0].StoredComponentType);
                 break;
         }
     }
