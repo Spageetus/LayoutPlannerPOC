@@ -27,6 +27,7 @@ namespace LayoutPlannerPOC
             if(selectedComponentType == null) selectedComponentType = "none";
 
             StateManager._selectedComponentType = selectedComponentType;
+            StateManager.heldComponent = FactoryComponent.CreateFromName(selectedComponentType);
         }
 
         public static string GetSelectedComponentType()

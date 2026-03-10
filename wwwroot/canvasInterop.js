@@ -5,6 +5,7 @@
     ctx: any = undefined,
     canvas: any = undefined,
     components: any = [],
+    heldComponent: any = undefined,
     //top: Number,
     //bottom: Number,
     //left: Number,
@@ -35,9 +36,6 @@
         canvasDimensions.cellSize = _cellSize;
 
         this.translate(canvasDimensions.width / 2, canvasDimensions.height / 2);
-
-        
-        
     },
 
     drawGrid: function () {
@@ -127,34 +125,58 @@
         console.log("Drawing Components...");
         if (!ctx) return;
         for (let c of this.components) {
-            console.log("Drawing component: " + c.name);
-            //if component does not have an SVG image asset: draw one manually
-            if (!c.imageFilePath) {
-                console.log("Component does not have a custom SVG")
-                //fill inside of component
-                ctx.fillStyle = "grey";
-                ctx.fillRect(c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize, c.height * canvasDimensions.cellSize);
-                
-
-                //write name of component
-                ctx.fillStyle = "white";
-                ctx.font = "30px sans-serif";
-                ctx.fillText(c.name, c.x * canvasDimensions.cellSize, (c.y + c.height / 2) * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize);
-                ctx.fillStyle = "black";
-
-                //draw outline of component
-                ctx.strokeRect(c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize, c.height * canvasDimensions.cellSize);
-                continue;    
-            }
-            console.log("Drawing component's SVG...")
-            //draw image from file
-            const img = new Image(100, 100);
-
-            //altering stored link so the JS can access it
-            img.src = c.imageFilePath.replace("\\", "/").replace("wwwroot/", "");
-            ctx.drawImage(img, c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize);
+            this.drawComponent(c);
         }
+        this.drawHeldComponent();
         console.log("Finished drawing components");
+    },
+
+    drawComponent: function (c) {
+        //if component does not have an SVG image asset: draw one manually
+        if (!c.imageFilePath) {
+            console.log("Component does not have a custom SVG")
+            //fill inside of component
+            ctx.fillStyle = "grey";
+            ctx.fillRect(c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize, c.height * canvasDimensions.cellSize);
+
+
+            //write name of component
+            ctx.fillStyle = "white";
+            ctx.font = "30px sans-serif";
+            ctx.fillText(c.name, c.x * canvasDimensions.cellSize, (c.y + c.height / 2) * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize);
+            ctx.fillStyle = "black";
+
+            //draw outline of component
+            ctx.strokeRect(c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize, c.height * canvasDimensions.cellSize);
+            return;
+        }
+        console.log("Drawing component's SVG...")
+        //draw image from file
+        const img = new Image(100, 100);
+        //altering stored link so the JS can access it
+        img.src = c.imageFilePath.replace("\\", "/").replace("wwwroot/", "");
+        ctx.drawImage(img, c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize);
+    },
+
+    drawHeldComponent: function () {
+        if (this.heldComponent) {
+            ctx.globalAlpha = 0.75;
+            this.drawComponent(this.heldComponent);
+            ctx.globalAlpha = 1;
+        }
+    },
+
+    setHeldComponent: function (c) {
+        this.heldComponent = c;
+        console.log("changing held component");
+        console.log(this.heldComponent);
+    }, 
+
+    setHeldComponentLocation: function (x, y) {
+        if (this.heldComponent) {
+            this.heldComponent.x = x;
+            this.heldComponent.y = y;
+        }
     },
 
     panUp: function () {
@@ -212,10 +234,15 @@
 
         console.log("Updated dimensions:");
         console.log(canvasDimensions);
+    },
 
-        //sending the canvas top and left data to the Design Canvas so it can determine click locations accurately.
-        DotNet.invokeMethodAsync("LayoutPlannerPOC", "SetCanvasTop", canvasDimensions.top);
-        DotNet.invokeMethodAsync("LayoutPlannerPOC", "SetCanvasLeft", canvasDimensions.left);
+    getCanvasTop: function()
+    {
+        return canvasDimensions.top;
+    },
+
+    getCanvasLeft: function () {
+        return canvasDimensions.left;
     }
 };
 
@@ -239,3 +266,4 @@ canvasDimensions = {
     */
 
 }
+

@@ -3,14 +3,6 @@ using System.Numerics;
 
 namespace LayoutPlannerPOC.Data
 {
-    public enum Rotations
-    {
-        None = 0,
-        D90 = 1,
-        D180 = 2,
-        D270 = 3,
-        D360 = 0
-    }
 
     public class FactoryComponent
     {
@@ -19,7 +11,7 @@ namespace LayoutPlannerPOC.Data
         public string? ImageFilePath { get; set; }
         public int? Height { get; set; } = 1;
         public int? Width { get; set; } = 1;
-        public  Rotations Rotation { get; set; } = 0;
+        public  int Rotation { get; set; } = 0;
         public int? X { get; set; }
         public int? Y { get; set; }
         public FactoryComponent() { }
