@@ -3,6 +3,24 @@ using System.Numerics;
 
 namespace LayoutPlannerPOC.Data
 {
+    public enum FactoryComponentType
+    {
+        None = 0,
+        TheHUB,
+        AWESOMESink,
+        Constructor,
+        Assembler,
+        Manufacturer,
+        Packager,
+        Refinery,
+        Blender,
+        ParticleAccelerator,
+        Converter,
+        Smelter,
+        Foundry,
+        Miner
+    };
+    
 
     public class FactoryComponent
     {
@@ -83,6 +101,17 @@ namespace LayoutPlannerPOC.Data
 
         }
 
+        //TODO: Use this method instead of the "create from name"
+        public static FactoryComponent? Create(FactoryComponentType type)
+        {
+            if (type == FactoryComponentType.None) return null;
+            switch (type)
+            {
+                case FactoryComponentType.Constructor:
+                    return null;
+                default: return null;
+            }
+        }
         private static string? FindComponentFilePath(string name, int rotation)
         {
             string svgFilePath = "wwwroot\\Assets\\ComponentGraphics\\" + name + rotation + ".svg";

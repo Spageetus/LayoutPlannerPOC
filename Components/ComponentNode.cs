@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
-
+//TODO: DELETE THIS FILE AFTER STEALING THE IMPORT/EXPORT CODE
 namespace LayoutPlannerPOC.Components
 {
     public class ComponentNode

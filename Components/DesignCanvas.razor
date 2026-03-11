@@ -78,12 +78,17 @@
         await Redraw();
     }
 
-    
+
 
     //TODO: Redraw canvas when any part of the component has changed (including being set to null)
     private async Task HandleMouseMove(MouseEventArgs e)
     {
-        if (StateManager.GetHeldComponent() is null) return;
+        //TODO: find a better time to change the held component, constantly setting the value to null CANNOT be good
+        if (StateManager.GetHeldComponent() is null)
+        {
+            //clear the held component
+            await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", null);
+        }
 
         #nullable disable
         FactoryComponent heldComponent = StateManager.GetHeldComponent();
@@ -97,6 +102,8 @@
         _mouseRow = Math.Truncate(canvasY / cellSize);
         _mouseCol = Math.Truncate(canvasX / cellSize);
 
+
+        //yes I know this condition is already handled, im in the middle of rewriting this
         if (StateManager.GetHeldComponent() is not null)
         {
             #nullable disable //disables nullable warning
@@ -112,7 +119,9 @@
         }
         else 
         {
+            Console.WriteLine("Held component is null");
             await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", null);
+            await this.Redraw();
         }
     }
 

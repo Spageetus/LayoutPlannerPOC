@@ -93,6 +93,7 @@
             case("q"):
                 StateManager.setSelectedComponentType("none");
                 StateManager.ClearSelection();
+                await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
                 break;
             //Hotbar keys
             case("1"):
