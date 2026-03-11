@@ -1,6 +1,7 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@using Data
+@inject IJSRuntime JSRuntime
 
-<canvas @ref="_canvasReference" @onclick="HandleCanvasClick" @onmousemove="HandleMouseMove"@ id="design-canvas" tabindex="0" @oncontextmenu:preventDefault="true">I am the main canvas</canvas>
+<canvas @ref="_canvasReference" @on @onclick="HandleCanvasClick" @onmousemove="HandleMouseMove" @onmouseleave="handleMouseLeaveCanvas" @onmouseenter="handleMouseEnterCanvas" id="design-canvas" tabindex="0" @oncontextmenu:preventDefault="true">I am the main canvas</canvas>
 @code {
 
 
@@ -13,6 +14,7 @@
     private double _clickY;
     private double _mouseRow;
     private double _mouseCol;
+    private bool mouseOnScreen{ get; set; }
 
     //TODO: Is this something the StateManager should remember???
     //TODO: Rename to canvasOffsetX/Y
@@ -29,11 +31,24 @@
         }
     }
 
+    private async Task handleMouseLeaveCanvas(MouseEventArgs e)
+    {
+        this.mouseOnScreen = false;
+        await this.Redraw();
+    }
+
+    private async Task handleMouseEnterCanvas(MouseEventArgs e)
+    {
+        await _canvasReference.FocusAsync();
+        this.mouseOnScreen = true;
+        await this.Redraw();
+    }
+
 
 
     protected async Task Redraw()
     {
-        await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
+        await JSRuntime.InvokeVoidAsync("canvasInterop.redraw", this.mouseOnScreen);
         canvasTop = await JSRuntime.InvokeAsync<float>("canvasInterop.getCanvasTop");
         canvasLeft = await JSRuntime.InvokeAsync<float>("canvasInterop.getCanvasLeft");
     }
@@ -63,8 +78,18 @@
         await Redraw();
     }
 
+    
+
+    //TODO: Redraw canvas when any part of the component has changed (including being set to null)
     private async Task HandleMouseMove(MouseEventArgs e)
     {
+        if (StateManager.GetHeldComponent() is null) return;
+
+        #nullable disable
+        FactoryComponent heldComponent = StateManager.GetHeldComponent();
+        #nullable restore
+
+
         double canvasY = e.OffsetY + canvasTop;
         if (canvasY < 0) canvasY -= cellSize;
         double canvasX = e.OffsetX + canvasLeft;
@@ -74,6 +99,7 @@
 
         if (StateManager.GetHeldComponent() is not null)
         {
+            #nullable disable //disables nullable warning
             LayoutPlannerPOC.Data.FactoryComponent c = StateManager.GetHeldComponent();
             if(c.X != (int)_mouseCol || c.Y != (int)_mouseRow)
             {
@@ -82,6 +108,11 @@
                 await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", c);
                 await this.Redraw();
             }
+            #nullable enable
+        }
+        else 
+        {
+            await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", null);
         }
     }
 

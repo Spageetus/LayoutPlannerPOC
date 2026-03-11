@@ -53,6 +53,7 @@
 
     private HotbarButton[] hotbarButtons = new HotbarButton[10];
 
+    //TODO: Add a global event handler 
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
         //Console.WriteLine($"Key pressed: {e.Key}");  
@@ -91,10 +92,13 @@
                 break;
             case("q"):
                 StateManager.setSelectedComponentType("none");
+                StateManager.ClearSelection();
                 break;
             //Hotbar keys
             case("1"):
-                StateManager.setSelectedComponentType(hotbarButtons[1].StoredComponentType);
+                //TODO: confirm if nullable warnings are needed
+                #nullable disable //disabling nullable warnings
+                StateManager.setSelectedComponentType(hotbarButtons[1].StoredComponentType); //is there a way to suppress these warnings??? or even better, verify the buttons !null
                 break;
             case ("2"):
                 StateManager.setSelectedComponentType(hotbarButtons[2].StoredComponentType);
@@ -123,6 +127,7 @@
             case ("0"):
                 StateManager.setSelectedComponentType(hotbarButtons[0].StoredComponentType);
                 break;
+                #nullable enable
         }
     }
 }

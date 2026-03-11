@@ -40,6 +40,13 @@ namespace LayoutPlannerPOC
             return heldComponent;
         }
 
+        public static void ClearSelection()
+        {
+            StateManager._selectedComponentType = "none";
+            StateManager.heldComponent = null;
+
+        }
+
         public static List<FactoryComponent> GetFactoryComponents()
         {
             return _componentsList;

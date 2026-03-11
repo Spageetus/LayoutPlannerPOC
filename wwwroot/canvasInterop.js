@@ -1,18 +1,11 @@
 ﻿window.canvasInterop = {
-    //width: Number, 
-    //height: Number,
-    //cellSize: Number,
     ctx: any = undefined,
     canvas: any = undefined,
     components: any = [],
     heldComponent: any = undefined,
-    //top: Number,
-    //bottom: Number,
-    //left: Number,
-    //right: Number,
     
     
-
+    //TODO: canvas grid is not drawn correctly when the page is resized
     setupCanvas: function (canvasElement, _cellSize) {
         if (!canvasElement) {
             return;
@@ -93,13 +86,13 @@
         //console.log("Clearing canvas...");
     },
 
-    redraw: function () {
+    redraw: function (shouldDrawHeldComponent = false) {
         //console.log("redrawing canvas");
         window.canvasInterop.clearCanvas();
         ctx.setTransform(canvasDimensions.tMatrix);
         window.canvasInterop.drawGrid();
         window.canvasInterop.drawComponents();
-
+        if (shouldDrawHeldComponent) this.drawHeldComponent();
         //Drawing a square around 0, 0
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
@@ -127,7 +120,7 @@
         for (let c of this.components) {
             this.drawComponent(c);
         }
-        this.drawHeldComponent();
+        //this.drawHeldComponent();
         console.log("Finished drawing components");
     },
 
@@ -160,8 +153,10 @@
 
     drawHeldComponent: function () {
         if (this.heldComponent) {
+            //making the held component translucent
             ctx.globalAlpha = 0.75;
             this.drawComponent(this.heldComponent);
+            //restoring default transparency
             ctx.globalAlpha = 1;
         }
     },
