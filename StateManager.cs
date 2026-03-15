@@ -52,9 +52,15 @@ namespace LayoutPlannerPOC
             return _componentsList;
         }
 
+        public static FactoryComponent? GetComponentAtLocation(int x, int y)
+        {
+            foreach (FactoryComponent component in _componentsList)
+            {
+                if(component.X == x && component.Y == y) return component;
+            }
+            return null;
+        }
+
         
-
-
-
     }
 }

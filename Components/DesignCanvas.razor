@@ -1,7 +1,14 @@
 ﻿@using Data
 @inject IJSRuntime JSRuntime
 
-<canvas @ref="_canvasReference" @on @onclick="HandleCanvasClick" @onmousemove="HandleMouseMove" @onmouseleave="handleMouseLeaveCanvas" @onmouseenter="handleMouseEnterCanvas" id="design-canvas" tabindex="0" @oncontextmenu:preventDefault="true">I am the main canvas</canvas>
+<canvas @ref="_canvasReference" 
+    @onclick="HandleCanvasClick" 
+    @oncontextmenu:preventDefault="true"
+    @onmousemove="HandleMouseMove" 
+    @onmouseleave="HandleMouseLeaveCanvas" 
+    @onmouseenter="HandleMouseEnterCanvas" 
+    id="design-canvas" tabindex="0" 
+    >I am the main canvas</canvas>
 @code {
 
 
@@ -18,8 +25,8 @@
 
     //TODO: Is this something the StateManager should remember???
     //TODO: Rename to canvasOffsetX/Y
-    private static double canvasTop = 0; //making these variables static so I can set them using the JSInvokeable functions
-    private static double canvasLeft = 0;
+    private double canvasTop = 0; 
+    private double canvasLeft = 0;
 
     //sets up canvas for the first time (if necessary), then draws canvas
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -31,13 +38,13 @@
         }
     }
 
-    private async Task handleMouseLeaveCanvas(MouseEventArgs e)
+    private async Task HandleMouseLeaveCanvas(MouseEventArgs e)
     {
         this.mouseOnScreen = false;
         await this.Redraw();
     }
 
-    private async Task handleMouseEnterCanvas(MouseEventArgs e)
+    private async Task HandleMouseEnterCanvas(MouseEventArgs e)
     {
         await _canvasReference.FocusAsync();
         this.mouseOnScreen = true;
@@ -71,8 +78,6 @@
 
 
         c.SetLocation((int)_clickX, (int)_clickY);
-
-        //await JSRuntime.InvokeVoidAsync("canvasInterop.resetTransform");
 
         await JSRuntime.InvokeVoidAsync("canvasInterop.addComponent", c);
         await Redraw();
