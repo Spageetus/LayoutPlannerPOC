@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Numerics;
+using System.Text.Json;
 
 namespace LayoutPlannerPOC.Data
 {
@@ -126,7 +127,19 @@ namespace LayoutPlannerPOC.Data
             return null;
         }
 
+        public bool ContainsPoint(int col, int row)
+        {
+            if (this.X > col) return false;
+            if (this.X + this.Width < col) return false;
+            if(this.Y > row) return false;
+            if(this.Y + this.Height < row) return false;
+            return true;
+        }
 
+        public override string ToString()
+        {
+            return JsonSerializer.Serialize(this);
+        }
     }
 }
 

@@ -24,8 +24,8 @@ namespace LayoutPlannerPOC
 
         public static void setSelectedComponentType(string selectedComponentType)
         {
-            if(selectedComponentType == null) selectedComponentType = "none";
-
+            if (selectedComponentType == _selectedComponentType) return;
+            if (selectedComponentType == null) selectedComponentType = "none";
             StateManager._selectedComponentType = selectedComponentType;
             StateManager.heldComponent = FactoryComponent.CreateFromName(selectedComponentType);
         }
@@ -40,11 +40,22 @@ namespace LayoutPlannerPOC
             return heldComponent;
         }
 
+        public static void AddComponent(FactoryComponent c)
+        {
+            if (c == null) return;
+            _componentsList.Add(c);
+        }
+
+        public static bool DeleteComponent(FactoryComponent c)
+        {
+            return _componentsList.Remove(c);
+        }
+
         public static void ClearSelection()
         {
             StateManager._selectedComponentType = "none";
             StateManager.heldComponent = null;
-
+            
         }
 
         public static List<FactoryComponent> GetFactoryComponents()
@@ -56,7 +67,7 @@ namespace LayoutPlannerPOC
         {
             foreach (FactoryComponent component in _componentsList)
             {
-                if(component.X == x && component.Y == y) return component;
+                if(component.ContainsPoint(x, y)) return component;
             }
             return null;
         }

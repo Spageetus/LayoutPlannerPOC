@@ -3,12 +3,14 @@
 
 <canvas @ref="_canvasReference" 
     @onclick="HandleCanvasClick" 
+    @oncontextmenu="HandleRightClick"
     @oncontextmenu:preventDefault="true"
     @onmousemove="HandleMouseMove" 
     @onmouseleave="HandleMouseLeaveCanvas" 
     @onmouseenter="HandleMouseEnterCanvas" 
     id="design-canvas" tabindex="0" 
     >I am the main canvas</canvas>
+
 @code {
 
 
@@ -16,11 +18,8 @@
 
     private int cellSize = 20;
 
-
-    private double _clickX;
-    private double _clickY;
-    private double _mouseRow;
-    private double _mouseCol;
+    private int _mouseRow;
+    private int _mouseCol;
     private bool mouseOnScreen{ get; set; }
 
     //TODO: Is this something the StateManager should remember???
@@ -31,9 +30,11 @@
     //sets up canvas for the first time (if necessary), then draws canvas
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        //TODO: Fix bug where components are not drawn after the page is refreshed
         if (firstRender)
         {
             await JSRuntime.InvokeVoidAsync("canvasInterop.setupCanvas", _canvasReference, cellSize);
+            await this.UpdateJSComponents();
             await Redraw();
         }
     }
@@ -55,79 +56,70 @@
 
     protected async Task Redraw()
     {
+
         await JSRuntime.InvokeVoidAsync("canvasInterop.redraw", this.mouseOnScreen);
         canvasTop = await JSRuntime.InvokeAsync<float>("canvasInterop.getCanvasTop");
         canvasLeft = await JSRuntime.InvokeAsync<float>("canvasInterop.getCanvasLeft");
     }
 
+
+
     private async Task HandleCanvasClick(MouseEventArgs e)
     {
-        Console.WriteLine("Placing component: " + StateManager.GetSelectedComponentType());
         string componentName = StateManager.GetSelectedComponentType();
 
         Data.FactoryComponent? c = Data.FactoryComponent.CreateFromName(componentName);
         if (c is null) return;
-
-        double canvasClickX = e.OffsetX + canvasLeft;
-        if (canvasClickX < 0) canvasClickX -= cellSize; //slight adjustment to fix offset for clicks where x < 0
-        double canvasClickY = e.OffsetY + canvasTop;
-        if (canvasClickY < 0) canvasClickY -= cellSize; //slight adjustment to fix offset for clicks where y < 0
-
-        _clickX = Math.Truncate(canvasClickX / cellSize);
-        _clickY = Math.Truncate(canvasClickY/ cellSize);
-
-
-        c.SetLocation((int)_clickX, (int)_clickY);
-
-        await JSRuntime.InvokeVoidAsync("canvasInterop.addComponent", c);
+        c.SetLocation(_mouseCol, _mouseRow);
+        StateManager.AddComponent(c);
+        await this.UpdateJSComponents();
         await Redraw();
+    }
+
+    private async Task HandleRightClick(MouseEventArgs e)
+    {
+        FactoryComponent? component = StateManager.GetComponentAtLocation(_mouseCol, _mouseRow);
+        if (component is null) return;
+        StateManager.DeleteComponent(component);
+
+        await this.UpdateJSComponents();
+        await this.Redraw();
     }
 
 
 
-    //TODO: Redraw canvas when any part of the component has changed (including being set to null)
     private async Task HandleMouseMove(MouseEventArgs e)
     {
-        //TODO: find a better time to change the held component, constantly setting the value to null CANNOT be good
-        if (StateManager.GetHeldComponent() is null)
-        {
-            //clear the held component
-            await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", null);
-        }
+        //convert the mouse location to internal grid coordinates
+        double internalClickX = e.OffsetX + canvasLeft; //adjusting click location to account for canvas translations
+        double internalClickY = e.OffsetY + canvasTop;
+        int currMouseCol = (int)Math.Floor(internalClickX / cellSize);
+        int currMouseRow = (int)Math.Floor(internalClickY / cellSize);
+        //if the mouse location has not changed, there is no need to continue
+        if (currMouseCol == this._mouseCol && currMouseRow == this._mouseRow) return;
+
+        //update the current mouse location
+        this._mouseCol = currMouseCol;
+        this._mouseRow = currMouseRow;
+
+        //if there is no held component, there is no need to continue
+        if (StateManager.GetHeldComponent() == null) return;
 
         #nullable disable
         FactoryComponent heldComponent = StateManager.GetHeldComponent();
+        heldComponent.SetLocation(this._mouseCol, this._mouseRow);
         #nullable restore
 
+        //send the updated held component to the JS canvas
+        await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", heldComponent);
 
-        double canvasY = e.OffsetY + canvasTop;
-        if (canvasY < 0) canvasY -= cellSize;
-        double canvasX = e.OffsetX + canvasLeft;
-        if (canvasX < 0) canvasX -= cellSize;
-        _mouseRow = Math.Truncate(canvasY / cellSize);
-        _mouseCol = Math.Truncate(canvasX / cellSize);
+        await this.Redraw();
 
+    }
 
-        //yes I know this condition is already handled, im in the middle of rewriting this
-        if (StateManager.GetHeldComponent() is not null)
-        {
-            #nullable disable //disables nullable warning
-            LayoutPlannerPOC.Data.FactoryComponent c = StateManager.GetHeldComponent();
-            if(c.X != (int)_mouseCol || c.Y != (int)_mouseRow)
-            {
-                c.SetLocation((int)_mouseCol, (int)_mouseRow);
-                Console.WriteLine("Held Component: " + StateManager.GetHeldComponent().Name);
-                await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", c);
-                await this.Redraw();
-            }
-            #nullable enable
-        }
-        else 
-        {
-            Console.WriteLine("Held component is null");
-            await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", null);
-            await this.Redraw();
-        }
+    private async Task UpdateJSComponents()
+    {
+        await JSRuntime.InvokeVoidAsync("canvasInterop.setComponents", StateManager.GetFactoryComponents());
     }
 
 }

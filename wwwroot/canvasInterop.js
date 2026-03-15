@@ -103,14 +103,8 @@
         
     },
 
-
-    addComponent: function(newComponent) {
-        this.components.push(newComponent);
-    },
-
     setComponents: function (componentsList) {
         this.components = componentsList;
-        this.redraw();
     },
 
     drawComponents: function () {
