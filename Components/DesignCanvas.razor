@@ -68,7 +68,8 @@
     {
         string componentName = StateManager.GetSelectedComponentType();
 
-        Data.FactoryComponent? c = Data.FactoryComponent.CreateFromName(componentName);
+        //FactoryComponent? c = FactoryComponent.CreateFromName(componentName);
+        FactoryComponent? c = StateManager.GetHeldComponent()?.CreateNewInstance();
         if (c is null) return;
         c.SetLocation(_mouseCol, _mouseRow);
         StateManager.AddComponent(c);

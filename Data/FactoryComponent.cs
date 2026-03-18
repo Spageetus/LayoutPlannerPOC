@@ -24,20 +24,20 @@ namespace LayoutPlannerPOC.Data
         Smelter,
         Foundry,
         Miner
-    };
+    }
 
-    struct Rotation
+    public enum Rotations
     {
-        public const int CW360 = 0;
-        public const int CW0 = 0;
-        public const int CW90 = 1;
-        public const int CW180 = 2;
-        public const int CW270 = 3;
-        
+        D0 = 0,
+        D360 = 0,
+        D90 = 1,
+        D180 = 2,
+        D270 = 3,
     }
 
 
 
+    //TODO: holy shit this whole file is a mess
 
     public class FactoryComponent
     {
@@ -47,9 +47,11 @@ namespace LayoutPlannerPOC.Data
         public string? ImageFilePath { get; set; }
         public int? Height { get; set; } = 1;
         public int? Width { get; set; } = 1;
-        public  int Rotation { get; set; } = 0;
+        public Rotations Rotation { get; set; } = 0;
         public int? X { get; set; }
         public int? Y { get; set; }
+
+        //TODO: instead of having a gazillion different constructors who dont work together, 
         public FactoryComponent() { }
 
         public FactoryComponent(FactoryComponentType type, int? overrideId = null)
@@ -126,7 +128,7 @@ namespace LayoutPlannerPOC.Data
             }
         }
 
-        public FactoryComponent(int id, string name, string imageFilePath, int height, int width, int rotation, int x, int y)
+        public FactoryComponent(int id, string name, string imageFilePath, int height, int width, Rotations rotation, int x, int y)
         {
             this.Id = id;
             this.Name = name;
@@ -138,7 +140,65 @@ namespace LayoutPlannerPOC.Data
             this.Y = y;
         }
 
+        
 
+        public FactoryComponent CreateNewInstance()
+        {
+            FactoryComponent c = new FactoryComponent();
+            c.Id = FactoryComponent.nextId;
+            c.Name = this.Name; 
+            c.ImageFilePath = this.ImageFilePath;
+            c.Height = this.Height;
+            c.Width = this.Width;
+            c.Rotation = this.Rotation;
+            c.X = this.X;
+            c.Y = this.Y;
+            return c;
+        }
+
+        /// <summary>
+        /// Sets the Rotation property to either 0 (0/360 deg), 1 (90 deg), 2 (180 deg), or 3 (270 deg)
+        /// </summary>
+        /// <param name="newRotation"></param>
+        public void SetRotation(Rotations newRotation)
+        {
+            Console.WriteLine("newRotation: " + newRotation);
+            //any rotations below D0 will be rolled around to D270
+            if (newRotation < Rotations.D0) newRotation = Rotations.D270;
+            
+            //any rotations higher than D270 will be rolled back around to D0 
+            if (newRotation > Rotations.D270) newRotation = Rotations.D0;
+
+            //theoretically should flip the height/width of the component if neededr
+            if((int)newRotation % 2 != (int)this.Rotation % 2)
+            {
+                int? tempWidth = this.Width;
+                this.Width = this.Height;
+                this.Height = tempWidth;
+            }
+            this.Rotation = newRotation;
+
+            //TODO: why did I make this a static method?
+            this.ImageFilePath = FactoryComponent.FindComponentFilePath(this.Name, this.Rotation);
+        }
+
+        /// <summary>
+        /// Rotates component 90 degrees clockwise
+        /// </summary>
+        public void RotateCW90()
+        {
+            if (this is null) return;
+            this.SetRotation(this.Rotation + 1);
+        }
+
+        /// <summary>
+        /// Rotates component 90 degrees counter-clockwise
+        /// </summary>
+        public void RotateCCW90()
+        {
+            if (this is null) return;
+            this.SetRotation(this.Rotation - 1);
+        }
 
         public void SetLocation(int x, int y)
         {
@@ -205,6 +265,7 @@ namespace LayoutPlannerPOC.Data
             }
 
             component.ImageFilePath = FactoryComponent.FindComponentFilePath(name, 0);
+            component.Id = FactoryComponent.nextId++;
             return component;
 
         }
@@ -220,10 +281,10 @@ namespace LayoutPlannerPOC.Data
                 default: return null;
             }
         }
-        private static string? FindComponentFilePath(string name, int rotation)
+        private static string? FindComponentFilePath(string name, Rotations rotation)
         {
-            string svgFilePath = "wwwroot\\Assets\\ComponentGraphics\\" + name + rotation + ".svg";
-            svgFilePath = $"wwwroot\\Assets\\ComponentGraphics\\{name}\\{name + rotation}.svg";
+            string svgFilePath = "wwwroot\\Assets\\ComponentGraphics\\" + name + (int)rotation + ".svg";
+            svgFilePath = $"wwwroot\\Assets\\ComponentGraphics\\{name}\\{name + (int)rotation}.svg";
             Console.WriteLine(svgFilePath);
             if (System.IO.File.Exists(svgFilePath))
             {
