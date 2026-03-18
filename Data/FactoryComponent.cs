@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
+using System;
+using System.Diagnostics.Metrics;
 using System.Numerics;
+using System.Reflection;
 using System.Text.Json;
 
 namespace LayoutPlannerPOC.Data
@@ -21,10 +25,23 @@ namespace LayoutPlannerPOC.Data
         Foundry,
         Miner
     };
-    
+
+    struct Rotation
+    {
+        public const int CW360 = 0;
+        public const int CW0 = 0;
+        public const int CW90 = 1;
+        public const int CW180 = 2;
+        public const int CW270 = 3;
+        
+    }
+
+
+
 
     public class FactoryComponent
     {
+        private static int nextId = 0;
         public int Id  { get; set; }
         public string? Name { get; set; }
         public string? ImageFilePath { get; set; }
@@ -35,6 +52,94 @@ namespace LayoutPlannerPOC.Data
         public int? Y { get; set; }
         public FactoryComponent() { }
 
+        public FactoryComponent(FactoryComponentType type, int? overrideId = null)
+        {
+            if (type == FactoryComponentType.None || type > FactoryComponentType.Miner)
+            {
+                return;
+            }
+
+            switch (type)
+            {
+                case FactoryComponentType.TheHUB:
+                    this.Name = "the_hub";
+                    this.SetSize(14, 26);
+                    break;
+                case FactoryComponentType.AWESOMESink:
+                    this.Name = "awesome_sink";
+                    this.SetSize(16, 13);
+                    break;
+                case FactoryComponentType.Constructor:
+                    this.Name = "constructor";
+                    this.SetSize(8, 10);
+                    break;
+                case FactoryComponentType.Assembler:
+                    this.Name = "assembler";
+                    this.SetSize(6, 9);
+                    break;
+                case FactoryComponentType.Manufacturer:
+                    this.Name = "manufacturer";
+                    this.SetSize(18, 20);
+                    break;
+                case FactoryComponentType.Packager:
+                    this.Name = "packager";
+                    this.SetSize(8, 8);
+                    break;
+                case FactoryComponentType.Refinery:
+                    this.Name = "refinery";
+                    this.SetSize(10, 22);
+                    break;
+                case FactoryComponentType.Blender:
+                    this.Name = "blender";
+                    this.SetSize(18, 16);
+                    break;
+                case FactoryComponentType.ParticleAccelerator:
+                    this.Name = "particle_accelerator";
+                    this.SetSize(24, 38);
+                    break;
+                case FactoryComponentType.Converter:
+                    this.Name = "converter";
+                    this.SetSize(16, 16);
+                    break;
+                case FactoryComponentType.Smelter:
+                    this.Name = "smelter";
+                    this.SetSize(6, 9);
+                    break;
+                case FactoryComponentType.Foundry:
+                    this.Name = "foundry";
+                    this.SetSize(10, 9);
+                    break;
+                case FactoryComponentType.Miner:
+                    this.Name = "miner";
+                    this.SetSize(6, 14);
+                    break;
+                default: return;
+             }
+            
+            if(overrideId == null)
+            {
+                this.Id = FactoryComponent.nextId++;
+            }
+            else
+            {
+                this.Id = (int)overrideId;
+            }
+        }
+
+        public FactoryComponent(int id, string name, string imageFilePath, int height, int width, int rotation, int x, int y)
+        {
+            this.Id = id;
+            this.Name = name;
+            this.ImageFilePath = imageFilePath;
+            this.Height = height;
+            this.Width = width;
+            this.Rotation = rotation;
+            this.X = x;
+            this.Y = y;
+        }
+
+
+
         public void SetLocation(int x, int y)
         {
             this.X = x;
@@ -43,6 +148,8 @@ namespace LayoutPlannerPOC.Data
 
         public void SetSize(int width, int height)
         {
+            if (width <= 0) width = 1;
+            if (height <= 0) height = 1;
             this.Width = width;
             this.Height = height;
         }
