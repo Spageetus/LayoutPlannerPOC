@@ -78,8 +78,15 @@
 
     private async Task HandleRightClick(MouseEventArgs e)
     {
+        //check if the mouse is currently over any component
         FactoryComponent? component = StateManager.GetComponentAtLocation(_mouseCol, _mouseRow);
         if (component is null) return;
+        /*
+         * if so:
+         *  - delete the component
+         *  - send updated list of components to JS interop
+         *  - redraw the canvas
+         */
         StateManager.DeleteComponent(component);
 
         await this.UpdateJSComponents();
@@ -117,6 +124,10 @@
 
     }
 
+    /// <summary>
+    /// Sends the list of components that need to be rendered to the canvas interop
+    /// </summary>
+    /// <returns>Task</returns>
     private async Task UpdateJSComponents()
     {
         await JSRuntime.InvokeVoidAsync("canvasInterop.setComponents", StateManager.GetFactoryComponents());

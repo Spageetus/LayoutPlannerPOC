@@ -90,6 +90,7 @@
             case ("h"):
                 await JSRuntime.InvokeVoidAsync("canvasInterop.goHome");
                 break;
+            //clear the current selection (if any) otherwise act as a pipette (Q)
             case("q"):
                 StateManager.setSelectedComponentType("none");
                 StateManager.ClearSelection();
@@ -129,6 +130,9 @@
                 StateManager.setSelectedComponentType(hotbarButtons[0].StoredComponentType);
                 break;
                 #nullable enable
+            case("t"): //TODO: Remove
+                Console.WriteLine("State Changed?: " + StateManager.StateHasChanged);
+                break;
         }
     }
 }
