@@ -96,6 +96,9 @@
                 StateManager.ClearSelection();
                 await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
                 break;
+            case("r"):
+                StateManager.GetHeldComponent()?.RotateCW90(); //?. is the null condidiontal operator
+                break;
             //Hotbar keys
             case("1"):
                 //TODO: confirm if nullable warnings are needed
