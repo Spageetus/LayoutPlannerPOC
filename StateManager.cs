@@ -104,6 +104,26 @@ namespace LayoutPlannerPOC
             return null;
         }
 
+        //TODO: figure out why all FactoryComponents seem to have the ID 0
+        public static bool CheckForDuplicates()
+        {
+            List<int> ids = new List<int>();
+            foreach(FactoryComponent c in  _componentsList)
+            {
+                if (c == null) return false;
+                int id = c.Id;
+                if(ids.Contains(id))
+                {
+
+                    Console.WriteLine($"duplicate id found: {id}");
+                    Console.WriteLine(string.Join(',', ids));
+                    return true;
+                }
+                ids.Add(id);
+            }
+            
+            return false;
+        }
         
     }
 }

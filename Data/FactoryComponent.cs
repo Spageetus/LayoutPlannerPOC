@@ -145,7 +145,7 @@ namespace LayoutPlannerPOC.Data
         public FactoryComponent CreateNewInstance()
         {
             FactoryComponent c = new FactoryComponent();
-            c.Id = FactoryComponent.nextId;
+            c.Id = FactoryComponent.nextId++;
             c.Name = this.Name; 
             c.ImageFilePath = this.ImageFilePath;
             c.Height = this.Height;
@@ -153,6 +153,7 @@ namespace LayoutPlannerPOC.Data
             c.Rotation = this.Rotation;
             c.X = this.X;
             c.Y = this.Y;
+            Console.WriteLine($"Creating component with id {c.Id}");
             return c;
         }
 
@@ -283,8 +284,7 @@ namespace LayoutPlannerPOC.Data
         }
         private static string? FindComponentFilePath(string name, Rotations rotation)
         {
-            string svgFilePath = "wwwroot\\Assets\\ComponentGraphics\\" + name + (int)rotation + ".svg";
-            svgFilePath = $"wwwroot\\Assets\\ComponentGraphics\\{name}\\{name + (int)rotation}.svg";
+            string svgFilePath = $"wwwroot\\Assets\\ComponentGraphics\\{name}\\{name + (int)rotation}.svg";
             Console.WriteLine(svgFilePath);
             if (System.IO.File.Exists(svgFilePath))
             {
@@ -304,6 +304,10 @@ namespace LayoutPlannerPOC.Data
             return true;
         }
 
+        /// <summary>
+        /// Technically converts it to a JSON format
+        /// </summary>
+        /// <returns>string</returns>
         public override string ToString()
         {
             return JsonSerializer.Serialize(this);
