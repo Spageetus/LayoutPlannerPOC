@@ -94,10 +94,13 @@
             case("q"):
                 StateManager.setSelectedComponentType("none");
                 StateManager.ClearSelection();
+                await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", null);
                 await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
                 break;
             case("r"):
                 StateManager.GetHeldComponent()?.RotateCW90(); //?. is the null condidiontal operator
+                Console.WriteLine("Component Rotation: " + StateManager.GetHeldComponent()?.Rotation);
+                Console.WriteLine(StateManager.GetHeldComponent()?.ToString());
                 break;
             //Hotbar keys
             case("1"):
@@ -135,6 +138,7 @@
                 #nullable enable
             case("t"): //TODO: Remove
                 Console.WriteLine("State Changed?: " + StateManager.StateHasChanged);
+                if (!StateManager.CheckForDuplicates()) Console.WriteLine("No duplicate components found :)");
                 break;
         }
     }
