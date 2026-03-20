@@ -252,6 +252,9 @@ namespace LayoutPlannerPOC.Data
                 case ("converter"):
                     component.SetSize(16, 16);
                     break;
+                case ("quantum_encoder"):
+                    component.SetSize(22, 50);
+                    break;
                 case ("smelter"):
                     component.SetSize(6, 9);
                     break;
