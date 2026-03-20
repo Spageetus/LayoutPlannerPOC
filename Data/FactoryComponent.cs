@@ -225,6 +225,9 @@ namespace LayoutPlannerPOC.Data
                 case ("the_hub"):
                     component.SetSize(14, 26);
                     break;
+                case ("space_elevator"):
+                    component.SetSize(54, 54);
+                    break;
                 case ("awesome_sink"):
                     component.SetSize(16, 13);
                     break;
