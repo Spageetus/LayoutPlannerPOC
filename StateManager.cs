@@ -1,8 +1,4 @@
-﻿using LayoutPlannerPOC.Components;
-using LayoutPlannerPOC.Data;
-using System.Reflection.Metadata;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.Swift;
+﻿using LayoutPlannerPOC.Data;
 
 namespace LayoutPlannerPOC
 {
@@ -89,6 +85,10 @@ namespace LayoutPlannerPOC
 
         public static List<FactoryComponent> GetFactoryComponents()
         {
+            foreach(FactoryComponent c in _componentsList)
+            {
+                c.UpdateImageFilePath();
+            }
             //marking placed components as being unchanged 
             StateManager._changedStates &= ~ChangedState.PlacedComponents;
             return _componentsList;

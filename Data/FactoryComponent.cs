@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics.Metrics;
 using System.Numerics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
 
 namespace LayoutPlannerPOC.Data
@@ -230,9 +231,6 @@ namespace LayoutPlannerPOC.Data
                 case ("constructor"):
                     component.SetSize(8, 10);
                     break;
-                case ("smelter"):
-                    component.SetSize(6, 9);
-                    break;
                 case ("assembler"):
                     component.SetSize(10, 15);
                     break;
@@ -253,6 +251,9 @@ namespace LayoutPlannerPOC.Data
                     break;
                 case ("converter"):
                     component.SetSize(16, 16);
+                    break;
+                case ("smelter"):
+                    component.SetSize(6, 9);
                     break;
                 case ("foundry"):
                     component.SetSize(10, 9);
@@ -281,6 +282,11 @@ namespace LayoutPlannerPOC.Data
                     return null;
                 default: return null;
             }
+        }
+
+        public void UpdateImageFilePath()
+        {
+            this.ImageFilePath = FactoryComponent.FindComponentFilePath(this.Name, this.Rotation);
         }
         private static string? FindComponentFilePath(string name, Rotations rotation)
         {

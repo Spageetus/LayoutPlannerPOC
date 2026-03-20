@@ -21,4 +21,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Assets\ComponentGraphics\assembler\" />
+  </ItemGroup>
+
 </Project>
