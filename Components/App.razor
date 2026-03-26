@@ -13,11 +13,17 @@
 </head>
 
 <body>
-    <Routes />
+    <Routes @rendermode="InteractiveServer"/>
     <ReconnectModal />
     <script src="@Assets["_framework/blazor.web.js"]"></script>
     <script src="scripts.js"></script>
     <script src="canvasInterop.js"></script>
+    <script>
+        window.addEventListener('resize', () =>
+        {
+            canvasInterop.redraw();
+        });
+    </script>
 </body>
 
 </html>

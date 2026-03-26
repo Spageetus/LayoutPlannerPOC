@@ -1,59 +1,148 @@
 ﻿@page "/"
+@using System.Threading.Tasks
 @rendermode InteractiveServer
-<PageTitle>Home</PageTitle>
+@inject LayoutPlannerPOC.StateManager sm
+@inject IJSRuntime JSRuntime
 
-<section id="activity-section">
-    <DesignCanvas SelectedColor="@selectedColor"></DesignCanvas>
-    
+
+<PageTitle>Satisfactory Layout Planner</PageTitle>
+<section id="activity-section" @onkeydown="HandleKeyDown">
+    <DesignCanvas/>
 </section>
-<section id="toolbar">
-    <button class="hotbar-button">
-        1
-    </button>
-    <button class="hotbar-button">
-        2
-    </button>
-    <button class="hotbar-button">
-        3
-    </button>
-    <button class="hotbar-button">
-        4
-    </button>
-    <button class="hotbar-button">
-        5
-    </button>
-    <button class="hotbar-button">
-        6
-    </button>
-    <button class="hotbar-button">
-        7
-    </button>
-    <button class="hotbar-button">
-        8
-    </button>
-    <button class="hotbar-button">
-        9
-    </button>
-    <button class="hotbar-button">
-        0
-    </button>
-</section>
-<ComponentBrowser SelectedColor="@selectedColor">
-    <ComponentButton Color="blue" OnSelect="HandleSelect"></ComponentButton>
-    <ComponentButton Color="red" OnSelect="HandleSelect"></ComponentButton>
-    <ComponentButton Color="green" OnSelect="HandleSelect"></ComponentButton>
-    <ComponentButton Color="purple" OnSelect="HandleSelect"></ComponentButton>
-    <ComponentButton Color="yellow" OnSelect="HandleSelect"></ComponentButton>
+<Hotbar>
+    @* Im sure theres a better way to do this *@
+    <HotbarButton ButtonId=1 @ref="hotbarButtons[1]"/>
+    <HotbarButton ButtonId=2 @ref="hotbarButtons[2]"/>
+    <HotbarButton ButtonId=3 @ref="hotbarButtons[3]" />
+    <HotbarButton ButtonId=4 @ref="hotbarButtons[4]" />
+    <HotbarButton ButtonId=5 @ref="hotbarButtons[5]" />
+    <HotbarButton ButtonId=6 @ref="hotbarButtons[6]" />
+    <HotbarButton ButtonId=7 @ref="hotbarButtons[7]" />
+    <HotbarButton ButtonId=8 @ref="hotbarButtons[8]" />
+    <HotbarButton ButtonId=9 @ref="hotbarButtons[9]" />
+    <HotbarButton ButtonId=0 @ref="hotbarButtons[0]" />
+    <FileIOButtons/>
+</Hotbar>
+<ComponentBrowser>
+    <ComponentCategory Label="Special">
+        <FactoryComponentButton Label="The Hub"/>
+        <FactoryComponentButton Label="Space Elevator"/>
+        <FactoryComponentButton Label="AWESOME Sink"/>
+    </ComponentCategory>
+
+    <ComponentCategory Label="Manufacturers">
+        <FactoryComponentButton Label="Constructor" />
+        <FactoryComponentButton Label="Assembler" />
+        <FactoryComponentButton Label="Manufacturer" />
+        <FactoryComponentButton Label="Packager" />
+        <FactoryComponentButton Label="Refinery" />
+        <FactoryComponentButton Label="Blender" />
+        <FactoryComponentButton Label="Particle Accelerator" />
+        <FactoryComponentButton Label="Converter" />
+        <FactoryComponentButton Label="Quantum Encoder" />
+    </ComponentCategory>
+
+    <ComponentCategory Label="Smelters">
+        <FactoryComponentButton Label="Smelter" />
+        <FactoryComponentButton Label="Foundry" />
+    </ComponentCategory>
+
+    <ComponentCategory Label="Miners">
+        <FactoryComponentButton Label="Miner" />
+    </ComponentCategory>
 </ComponentBrowser>
-<InputModal></InputModal>
+
 @code{
-    private string selectedColor = "None";
 
-    private void HandleSelect(string color)
+    private HotbarButton[] hotbarButtons = new HotbarButton[10];
+
+    //TODO: Add a global event handler 
+    private async Task HandleKeyDown(KeyboardEventArgs e)
     {
-        selectedColor = color;
-        StateHasChanged();
-        Console.WriteLine($"Button clicked: {color}");
-    }
+        //Console.WriteLine($"Key pressed: {e.Key}");  
 
+        switch (e.Key)
+        {
+            //panning movements (WASD)
+            case ("w"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panUp");
+                break;
+            case ("a"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panLeft");
+                break;
+            case ("s"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panDown");
+                break;
+            case ("d"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panRight");
+                break;
+            //panning movements (arrow keys)
+            case ("ArrowUp"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panUp");
+                break;
+            case ("ArrowDown"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panDown");
+                break;
+            case ("ArrowLeft"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panLeft");
+                break;
+            case ("ArrowRight"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.panRight");
+                break;
+            //return home (H)
+            case ("h"):
+                await JSRuntime.InvokeVoidAsync("canvasInterop.goHome");
+                break;
+            //clear the current selection (if any) otherwise act as a pipette (Q)
+            case("q"):
+                StateManager.setSelectedComponentType("none");
+                StateManager.ClearSelection();
+                await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", null);
+                await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
+                break;
+            case("r"):
+                StateManager.GetHeldComponent()?.RotateCW90(); //?. is the null condidiontal operator
+                Console.WriteLine("Component Rotation: " + StateManager.GetHeldComponent()?.Rotation);
+                Console.WriteLine(StateManager.GetHeldComponent()?.ToString());
+                break;
+            //Hotbar keys
+            case("1"):
+                //TODO: confirm if nullable warnings are needed
+                #nullable disable //disabling nullable warnings
+                StateManager.setSelectedComponentType(hotbarButtons[1].StoredComponentType); //is there a way to suppress these warnings??? or even better, verify the buttons !null
+                break;
+            case ("2"):
+                StateManager.setSelectedComponentType(hotbarButtons[2].StoredComponentType);
+                break;
+            case ("3"):
+                StateManager.setSelectedComponentType(hotbarButtons[3].StoredComponentType);
+                break;
+            case ("4"):
+                StateManager.setSelectedComponentType(hotbarButtons[4].StoredComponentType);
+                break;
+            case ("5"):
+                StateManager.setSelectedComponentType(hotbarButtons[5].StoredComponentType);
+                break;
+            case ("6"):
+                StateManager.setSelectedComponentType(hotbarButtons[6].StoredComponentType);
+                break;
+            case ("7"):
+                StateManager.setSelectedComponentType(hotbarButtons[7].StoredComponentType);
+                break;
+            case ("8"):
+                StateManager.setSelectedComponentType(hotbarButtons[8].StoredComponentType);
+                break;
+            case ("9"):
+                StateManager.setSelectedComponentType(hotbarButtons[9].StoredComponentType);
+                break;
+            case ("0"):
+                StateManager.setSelectedComponentType(hotbarButtons[0].StoredComponentType);
+                break;
+                #nullable enable
+            case("t"): //TODO: Remove
+                Console.WriteLine("State Changed?: " + StateManager.StateHasChanged);
+                if (!StateManager.CheckForDuplicates()) Console.WriteLine("No duplicate components found :)");
+                break;
+        }
+    }
 }

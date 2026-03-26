@@ -1,12 +1,11 @@
 ﻿window.canvasInterop = {
-
-    width: Number, 
-    height: Number,
-    cellSize: Number,
     ctx: any = undefined,
     canvas: any = undefined,
     components: any = [],
-
+    heldComponent: any = undefined,
+    
+    
+    //TODO: canvas grid is not drawn correctly when the page is resized
     setupCanvas: function (canvasElement, _cellSize) {
         if (!canvasElement) {
             return;
@@ -18,11 +17,18 @@
         canvasElement.width = canvasElement.clientWidth;
         canvasElement.height = canvasElement.clientHeight;
 
+        //update the dimension variables
+        canvasDimensions.top = 0;
+        canvasDimensions.bottom = canvasElement.height;
+        canvasDimensions.left = 0;
+        canvasDimensions.right = canvasElement.width;
+        canvasDimensions.width = canvasElement.width;
+        canvasDimensions.height = canvasElement.height;
+
         //setup variables for drawing on the canvas
-        width = canvasElement.width;
-        height = canvasElement.height;
-        cellSize = _cellSize;
-        
+        canvasDimensions.cellSize = _cellSize;
+
+        this.translate(canvasDimensions.width / 2, canvasDimensions.height / 2);
     },
 
     drawGrid: function () {
@@ -33,30 +39,33 @@
         }
         //console.log("Drawing grid...");
         let currX = 0;
+        currX = Math.trunc(canvasDimensions.left/canvasDimensions.cellSize) * canvasDimensions.cellSize;
         let currY = 0;
-        let columns = Math.trunc(width / cellSize) +1;
-        let rows = Math.trunc(height / cellSize) +1;
+        let columns = Math.trunc(canvasDimensions.width / canvasDimensions.cellSize) +1;
+        let rows = Math.trunc(canvasDimensions.height / canvasDimensions.cellSize) +1;
 
-        ctx.lineWidth = 0.5;
+        ctx.linewidth = 0.5;
         ctx.fillStyle = "black";
         ctx.beginPath();
         //draw vertical lines
-        //TODO: Increase width of every 8th grid line (size of foundations)
+        //TODO: Increase canvasDimensions.width of every 8th grid line (size of foundations)
         for (let i = 0; i < columns; i++) {
-            currX += cellSize;
+            
             currY = 0;
-            ctx.moveTo(currX, currY);
-            ctx.lineTo(currX, height);
+            ctx.moveTo(currX, canvasDimensions.top);
+            ctx.lineTo(currX, canvasDimensions.bottom);
+            currX += canvasDimensions.cellSize;
         }
         ctx.stroke();
         currX = 0;
-        currY = 0;
+        currY = Math.trunc(canvasDimensions.top /canvasDimensions.cellSize) * canvasDimensions.cellSize;
         //draw horizontal lines
         for (let i = 0; i < rows; i++) {
-            currY += cellSize;
+            
             currX = 0;
-            ctx.moveTo(currX, currY);
-            ctx.lineTo(width, currY);
+            ctx.moveTo(canvasDimensions.left, currY);
+            ctx.lineTo(canvasDimensions.right, currY);
+            currY += canvasDimensions.cellSize;
         }
         ctx.stroke();
 
@@ -72,42 +81,178 @@
         //resizing canvas clears everything on it
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
-        width = canvas.width;
-        height = canvas.height;
+        canvasDimensions.width = canvas.width;
+        canvasDimensions.height = canvas.height;
         //console.log("Clearing canvas...");
     },
 
-    redraw: function () {
+    redraw: function (shouldDrawHeldComponent = false) {
         //console.log("redrawing canvas");
         window.canvasInterop.clearCanvas();
+        ctx.setTransform(canvasDimensions.tMatrix);
         window.canvasInterop.drawGrid();
         window.canvasInterop.drawComponents();
+        if (shouldDrawHeldComponent) this.drawHeldComponent();
+        //Drawing a square around 0, 0
+        ctx.strokeStyle = "red";
+        ctx.lineWidth = 4;
+        ctx.strokeRect(-20, -20, 40, 40);
 
-    },
-
-
-    addComponent: function(newComponent) {
-        this.components.push(newComponent);
-        console.log("Current components:");
-        for (let c of this.components) {
-            console.log(c);
-        }
+        ctx.fillStyle = "black";
+        console.log(canvasDimensions.tMatrix);
+        
     },
 
     setComponents: function (componentsList) {
         this.components = componentsList;
-        this.redraw();
     },
 
     drawComponents: function () {
-        if (!ctx) return;
-        ctx.globalAlpha = 0.8;
+        console.log("   ");
         console.log("Drawing Components...");
+        if (!ctx) return;
         for (let c of this.components) {
-            console.log(c);
-            ctx.fillStyle = c.color;
-            ctx.fillRect(c.cellX * cellSize, c.cellY * cellSize, cellSize * c.width, cellSize * c.height);
+            this.drawComponent(c);
         }
-        ctx.globalAlpha = 1;
+        //this.drawHeldComponent();
+        console.log("Finished drawing components");
+    },
+
+    drawComponent: function (c) {
+        //if component does not have an SVG image asset: draw one manually
+        if (!c.imageFilePath) {
+            console.log("Component does not have a custom SVG")
+            //fill inside of component
+            ctx.fillStyle = "grey";
+            ctx.fillRect(c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize, c.height * canvasDimensions.cellSize);
+
+
+            //write name of component
+            ctx.fillStyle = "white";
+            ctx.font = "30px sans-serif";
+            ctx.fillText(c.name, c.x * canvasDimensions.cellSize, (c.y + c.height / 2) * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize);
+            ctx.fillStyle = "black";
+
+            //draw outline of component
+            ctx.strokeRect(c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize, c.width * canvasDimensions.cellSize, c.height * canvasDimensions.cellSize);
+            return;
+        }
+        console.log("Drawing component's SVG...")
+        //draw image from file
+        const img = new Image(100, 100);
+        //altering stored link so the JS can access it
+        img.src = c.imageFilePath.replace("\\", "/").replace("wwwroot/", "");
+        ctx.drawImage(img, c.x * canvasDimensions.cellSize, c.y * canvasDimensions.cellSize);
+    },
+
+    drawHeldComponent: function () {
+        if (this.heldComponent) {
+            //making the held component translucent
+            ctx.globalAlpha = 0.75;
+            this.drawComponent(this.heldComponent);
+            //restoring default transparency
+            ctx.globalAlpha = 1;
+        }
+    },
+
+    setHeldComponent: function (c) {
+        this.heldComponent = c;
+        console.log("changing held component");
+        console.log(this.heldComponent);
+    }, 
+
+    setHeldComponentLocation: function (x, y) {
+        if (this.heldComponent) {
+            this.heldComponent.x = x;
+            this.heldComponent.y = y;
+        }
+    },
+
+    panUp: function () {
+        console.log("panning up");
+        this.translate(0, -32);
+        this.redraw();
+    },
+
+    panDown: function () {
+        console.log("panning down");
+        this.translate(0, 32);
+        this.redraw();
+    },
+
+    panLeft: function () {
+        console.log("panning left");
+        this.translate(-32, 0);
+        this.redraw();
+    },
+
+    panRight: function () {
+        console.log("panning right");
+        this.translate(32, 0);
+        this.redraw();
+    },
+
+    goHome: function () {
+        this.resetTransform();
+    },
+
+    translate: function(x, y) {
+        ctx.translate(x, y);
+        this.updateDimensions(ctx.getTransform());
+    },
+
+    resetTransform: function () {
+        ctx.setTransform(1, 0, 0, 1, canvasDimensions.width/2, canvasDimensions.height/2);
+        this.updateDimensions(ctx.getTransform());
+        this.redraw();
+    },
+
+    updateDimensions: function (transformMatrix) {
+        //store transformation matrix
+        canvasDimensions.tMatrix = transformMatrix;
+
+        canvasDimensions.width = canvas.clientWidth;
+        canvasDimensions.height = canvas.clientHeight;
+
+        //update sides
+        canvasDimensions.top = canvasDimensions.tMatrix.f * -1;
+        canvasDimensions.bottom = canvasDimensions.top + canvasDimensions.height;
+
+        canvasDimensions.left = canvasDimensions.tMatrix.e * -1;
+        canvasDimensions.right = canvasDimensions.left + canvasDimensions.width;
+
+        console.log("Updated dimensions:");
+        console.log(canvasDimensions);
+    },
+
+    getCanvasTop: function()
+    {
+        return canvasDimensions.top;
+    },
+
+    getCanvasLeft: function () {
+        return canvasDimensions.left;
     }
 };
+
+canvasDimensions = {
+    width: Number,
+    height: Number,
+    top: Number,
+    bottom: Number,
+    left: Number,
+    right: Number,
+    cellSize: Number,
+    tMatrix: DOMMatrix
+    /*
+        tMatrix parameters:
+        a - horizontal scale
+        b - horizontal skew (NOT USING)
+        c - vertical skew (NOT USING) 
+        d - vertical scale
+        e - horizontal offset
+        f - vertical offset
+    */
+
+}
+

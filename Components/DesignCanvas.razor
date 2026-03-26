@@ -1,59 +1,137 @@
-﻿@inject IJSRuntime JSRuntime
+﻿@using Data
+@inject IJSRuntime JSRuntime
 
-<canvas @ref="_canvasReference" @onclick="HandleCanvasClick" id="design-canvas">I am the main canvas</canvas>
+<canvas @ref="_canvasReference" 
+    @onclick="HandleCanvasClick" 
+    @oncontextmenu="HandleRightClick"
+    @oncontextmenu:preventDefault="true"
+    @onmousemove="HandleMouseMove" 
+    @onmouseleave="HandleMouseLeaveCanvas" 
+    @onmouseenter="HandleMouseEnterCanvas" 
+    id="design-canvas" tabindex="0" 
+    >I am the main canvas</canvas>
 
 @code {
-    [Parameter]
-    public string SelectedColor { get; set; } = "none";
 
 
     private ElementReference _canvasReference;
-    
+
     private int cellSize = 20;
 
-    private Random rand = new Random();
+    private int _mouseRow;
+    private int _mouseCol;
+    private bool mouseOnScreen{ get; set; }
 
-
-    private double _clickX;
-    private double _clickY;
+    //TODO: Is this something the StateManager should remember???
+    //TODO: Rename to canvasOffsetX/Y
+    private double canvasTop = 0; 
+    private double canvasLeft = 0;
 
     //sets up canvas for the first time (if necessary), then draws canvas
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        //TODO: Fix bug where components are not drawn after the page is refreshed
         if (firstRender)
         {
             await JSRuntime.InvokeVoidAsync("canvasInterop.setupCanvas", _canvasReference, cellSize);
-            SelectedColor = "none";
+            await this.UpdateJSComponents();
+            await Redraw();
         }
-        await Redraw();
+    }
+
+    private async Task HandleMouseLeaveCanvas(MouseEventArgs e)
+    {
+        this.mouseOnScreen = false;
+        await this.Redraw();
+    }
+
+    private async Task HandleMouseEnterCanvas(MouseEventArgs e)
+    {
+        await _canvasReference.FocusAsync();
+        this.mouseOnScreen = true;
+        await this.Redraw();
     }
 
 
 
     protected async Task Redraw()
     {
-        await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
+
+        await JSRuntime.InvokeVoidAsync("canvasInterop.redraw", this.mouseOnScreen);
+        canvasTop = await JSRuntime.InvokeAsync<float>("canvasInterop.getCanvasTop");
+        canvasLeft = await JSRuntime.InvokeAsync<float>("canvasInterop.getCanvasLeft");
     }
+
+
 
     private async Task HandleCanvasClick(MouseEventArgs e)
     {
-        _clickX = Math.Truncate(e.OffsetX / cellSize);
-        _clickY = Math.Truncate(e.OffsetY / cellSize);
-        if (SelectedColor.Equals("none"))
-        {
-            await JSRuntime.InvokeVoidAsync("logString", "Selected Color is \"none\"");
-            return;
-        }
-        var c = new ComponentNode(SelectedColor);
-        c.CellX = _clickX;
-        c.CellY = _clickY;
+        string componentName = StateManager.GetSelectedComponentType();
 
-        c.width = rand.Next(1, 10);
-        c.height = rand.Next(1, 10);
-
-        await JSRuntime.InvokeVoidAsync("canvasInterop.addComponent", c);
-        //_clickX = e.OffsetX;
-        //_clickY = e.OffsetY;
-        await JSRuntime.InvokeVoidAsync("canvasInterop.redraw");
+        //FactoryComponent? c = FactoryComponent.CreateFromName(componentName);
+        FactoryComponent? c = StateManager.GetHeldComponent()?.CreateNewInstance();
+        if (c is null) return;
+        c.SetLocation(_mouseCol, _mouseRow);
+        StateManager.AddComponent(c);
+        await this.UpdateJSComponents();
+        await Redraw();
     }
+
+    private async Task HandleRightClick(MouseEventArgs e)
+    {
+        //check if the mouse is currently over any component
+        FactoryComponent? component = StateManager.GetComponentAtLocation(_mouseCol, _mouseRow);
+        if (component is null) return;
+        /*
+        * if so:
+         *  - delete the component
+         *  - send updated list of components to JS interop
+         *  - redraw the canvas
+         */
+        StateManager.DeleteComponent(component);
+        await this.UpdateJSComponents();
+        await this.Redraw();
+    }
+
+
+
+    private async Task HandleMouseMove(MouseEventArgs e)
+    {
+        //convert the mouse location to internal grid coordinates
+        double internalClickX = e.OffsetX + canvasLeft; //adjusting click location to account for canvas translations
+        double internalClickY = e.OffsetY + canvasTop;
+        int currMouseCol = (int)Math.Floor(internalClickX / cellSize);
+        int currMouseRow = (int)Math.Floor(internalClickY / cellSize);
+        //if the mouse location has not changed, there is no need to continue
+        if (currMouseCol == this._mouseCol && currMouseRow == this._mouseRow) return;
+
+        //update the current mouse location
+        this._mouseCol = currMouseCol;
+        this._mouseRow = currMouseRow;
+
+        //if there is no held component, there is no need to continue
+        if (StateManager.GetHeldComponent() == null) return;
+
+        #nullable disable
+        FactoryComponent heldComponent = StateManager.GetHeldComponent();
+        heldComponent.SetLocation(this._mouseCol, this._mouseRow);
+        #nullable restore
+
+        //send the updated held component to the JS canvas
+        await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", heldComponent);
+
+        await this.Redraw();
+
+    }
+
+    /// <summary>
+    /// Sends the list of components that need to be rendered to the canvas interop
+    /// </summary>
+    /// <returns>Task</returns>
+    private async Task UpdateJSComponents()
+    {
+        await JSRuntime.InvokeVoidAsync("canvasInterop.setComponents", StateManager.GetFactoryComponents());
+        await JSRuntime.InvokeVoidAsync("canvasInterop.setHeldComponent", StateManager.GetHeldComponent());
+    }
+
 }

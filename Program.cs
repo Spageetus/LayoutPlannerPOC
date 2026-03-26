@@ -1,10 +1,20 @@
+using LayoutPlannerPOC.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+
 using LayoutPlannerPOC.Components;
+using LayoutPlannerPOC;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("ComponentDB");
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddDbContextFactory<FactoryComponentContext>(options => options.UseSqlite(connectionString));
+//adding state manager singleton
+builder.Services.AddSingleton<LayoutPlannerPOC.StateManager>();
 
 var app = builder.Build();
 

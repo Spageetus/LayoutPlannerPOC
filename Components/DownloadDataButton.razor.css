@@ -1,0 +1,14 @@
+﻿.load-files-label {
+    display: flex;
+    --padding: 4px;
+    border: 2px solid black;
+    cursor: pointer;
+    height: stretch;
+    width: 100%;
+    justify-content: center;
+    background: white;
+}
+
+.download-icon {
+    width: 24px;
+}

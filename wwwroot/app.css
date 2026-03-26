@@ -44,7 +44,7 @@ html, body {
     width: 100%;
 }
 
-#toolbar
+/*#toolbar
 {
     background-color:aqua;
     height:auto;
@@ -59,9 +59,9 @@ html, body {
     bottom: 0%;
     z-index: 10;
     margin: 16px;
-}
+}*/
 
-.hotbar-button {
+/*.hotbar-button {
     display: table-cell;
     height: 50px;
     width: 50px;
@@ -72,7 +72,7 @@ html, body {
     text-align: left;
     padding-bottom: 50px;
 }
-
+*/
 
 #activity-section{
     display: flex;
