@@ -1,0 +1,18 @@
+﻿@using System.Threading.Tasks
+@using System.Text
+
+<label class="load-files-label">
+    <InputFile hidden OnChange="LoadFile"/>
+    <img class="upload-icon" src="/Assets/Icons/upload-01-stroke-rounded.svg" />
+</label>
+@code {
+    private async Task LoadFile(InputFileChangeEventArgs e)
+    {
+        using var memoryStream = new MemoryStream();
+        await e.File.OpenReadStream().CopyToAsync(memoryStream);
+        var smallFileByteArray = memoryStream.ToArray();
+        string inputString = Encoding.UTF8.GetString(smallFileByteArray);
+        StateManager.SetComponentsFromJSON(inputString);
+        StateHasChanged();
+    }
+}

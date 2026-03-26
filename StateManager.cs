@@ -1,4 +1,5 @@
 ﻿using LayoutPlannerPOC.Data;
+using System.Text.Json;
 
 namespace LayoutPlannerPOC
 {
@@ -83,6 +84,17 @@ namespace LayoutPlannerPOC
 
         }
 
+        public static string GetComponentsListAsJSON()
+        {
+            return JsonSerializer.Serialize(StateManager._componentsList);
+        }
+
+        public static void SetComponentsFromJSON(string jsonString)
+        {
+            //TODO: Why is this a possible null reference?
+            StateManager._componentsList = JsonSerializer.Deserialize<List<FactoryComponent>>(jsonString);
+        }
+
         public static List<FactoryComponent> GetFactoryComponents()
         {
             foreach(FactoryComponent c in _componentsList)
@@ -104,7 +116,6 @@ namespace LayoutPlannerPOC
             return null;
         }
 
-        //TODO: figure out why all FactoryComponents seem to have the ID 0
         public static bool CheckForDuplicates()
         {
             List<int> ids = new List<int>();
