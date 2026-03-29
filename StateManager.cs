@@ -1,4 +1,7 @@
 ﻿using LayoutPlannerPOC.Data;
+using Microsoft.AspNetCore.Components;
+using SQLitePCL;
+using System;
 using System.Text.Json;
 
 namespace LayoutPlannerPOC
@@ -92,6 +95,7 @@ namespace LayoutPlannerPOC
         public static void SetComponentsFromJSON(string jsonString)
         {
             //TODO: Why is this a possible null reference?
+            if (jsonString is null) throw new Exception("something went wrong while uploading factory data");
             StateManager._componentsList = JsonSerializer.Deserialize<List<FactoryComponent>>(jsonString);
         }
 
@@ -109,9 +113,10 @@ namespace LayoutPlannerPOC
 
         public static FactoryComponent? GetComponentAtLocation(int x, int y)
         {
-            foreach (FactoryComponent component in _componentsList)
+            for (int i = _componentsList.Count - 1; i >= 0; i--)
             {
-                if(component.ContainsPoint(x, y)) return component;
+                FactoryComponent component = _componentsList[i];
+                if (component.ContainsPoint(x, y)) return component;
             }
             return null;
         }
@@ -119,6 +124,8 @@ namespace LayoutPlannerPOC
         public static bool CheckForDuplicates()
         {
             List<int> ids = new List<int>();
+            
+
             foreach(FactoryComponent c in  _componentsList)
             {
                 if (c == null) return false;
