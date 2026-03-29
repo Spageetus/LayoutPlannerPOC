@@ -7,22 +7,27 @@
 
 <PageTitle>Satisfactory Layout Planner</PageTitle>
 <section id="activity-section" @onkeydown="HandleKeyDown">
-    <DesignCanvas/>
+    <DesignCanvas @ref="canvasRef"/>
 </section>
-<Hotbar>
-    @* Im sure theres a better way to do this *@
-    <HotbarButton ButtonId=1 @ref="hotbarButtons[1]"/>
-    <HotbarButton ButtonId=2 @ref="hotbarButtons[2]"/>
-    <HotbarButton ButtonId=3 @ref="hotbarButtons[3]" />
-    <HotbarButton ButtonId=4 @ref="hotbarButtons[4]" />
-    <HotbarButton ButtonId=5 @ref="hotbarButtons[5]" />
-    <HotbarButton ButtonId=6 @ref="hotbarButtons[6]" />
-    <HotbarButton ButtonId=7 @ref="hotbarButtons[7]" />
-    <HotbarButton ButtonId=8 @ref="hotbarButtons[8]" />
-    <HotbarButton ButtonId=9 @ref="hotbarButtons[9]" />
-    <HotbarButton ButtonId=0 @ref="hotbarButtons[0]" />
-    <FileIOButtons/>
-</Hotbar>
+
+<div class="hotbar-container">
+    <ControlTips @ref="controlTipsWindow" />
+    <Hotbar>
+        @* Im sure theres a better way to do this *@
+        <HotbarButton ButtonId=1 @ref="hotbarButtons[1]" />
+        <HotbarButton ButtonId=2 @ref="hotbarButtons[2]" />
+        <HotbarButton ButtonId=3 @ref="hotbarButtons[3]" />
+        <HotbarButton ButtonId=4 @ref="hotbarButtons[4]" />
+        <HotbarButton ButtonId=5 @ref="hotbarButtons[5]" />
+        <HotbarButton ButtonId=6 @ref="hotbarButtons[6]" />
+        <HotbarButton ButtonId=7 @ref="hotbarButtons[7]" />
+        <HotbarButton ButtonId=8 @ref="hotbarButtons[8]" />
+        <HotbarButton ButtonId=9 @ref="hotbarButtons[9]" />
+        <HotbarButton ButtonId=0 @ref="hotbarButtons[0]" />
+        <FileIOButtons />
+    </Hotbar>
+</div>
+
 <ComponentBrowser>
     <ComponentCategory Label="Special">
         <FactoryComponentButton Label="The Hub"/>
@@ -55,6 +60,18 @@
 @code{
 
     private HotbarButton[] hotbarButtons = new HotbarButton[10];
+    private DesignCanvas canvasRef { get; set; }
+    private ControlTips controlTipsWindow { get; set; }
+
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+
+        }
+        return base.OnAfterRenderAsync(firstRender);
+    }
 
     //TODO: Add a global event handler 
     private async Task HandleKeyDown(KeyboardEventArgs e)
