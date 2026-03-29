@@ -4,12 +4,14 @@
     components: any = [],
     heldComponent: any = undefined,
     
-    
     //TODO: canvas grid is not drawn correctly when the page is resized
     setupCanvas: function (canvasElement, _cellSize) {
         if (!canvasElement) {
             return;
         }
+
+        
+
         ctx = canvasElement.getContext("2d");
         canvas = canvasElement;
 
@@ -29,6 +31,8 @@
         canvasDimensions.cellSize = _cellSize;
 
         this.translate(canvasDimensions.width / 2, canvasDimensions.height / 2);
+
+        window.addEventListener('resize', this.redraw);
     },
 
     drawGrid: function () {
@@ -92,7 +96,7 @@
         ctx.setTransform(canvasDimensions.tMatrix);
         window.canvasInterop.drawGrid();
         window.canvasInterop.drawComponents();
-        if (shouldDrawHeldComponent) this.drawHeldComponent();
+        if (shouldDrawHeldComponent && this.drawHeldComponent) this.drawHeldComponent();
         //Drawing a square around 0, 0
         ctx.strokeStyle = "red";
         ctx.lineWidth = 4;
