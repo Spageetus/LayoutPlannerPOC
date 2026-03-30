@@ -4,7 +4,7 @@
 @inject LayoutPlannerPOC.StateManager sm
 @inject IJSRuntime JSRuntime
 
-
+<NavigationLock ConfirmExternalNavigation=true/>
 <PageTitle>Satisfactory Layout Planner</PageTitle>
 <section id="activity-section" @onkeydown="HandleKeyDown">
     <DesignCanvas @ref="canvasRef"/>
@@ -62,12 +62,17 @@
     private HotbarButton[] hotbarButtons = new HotbarButton[10];
     private DesignCanvas canvasRef { get; set; }
 
+    private async Task<bool> ConfirmNavigation()
+    {
+        return await JSRuntime.InvokeAsync<bool>("confirm", "You have unsaved data. Are you sure you want to leave?");
+    }
 
     protected override Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
         {
-
+            StateManager.ClearSelection();
+            StateManager.ClearComponents();
         }
         return base.OnAfterRenderAsync(firstRender);
     }

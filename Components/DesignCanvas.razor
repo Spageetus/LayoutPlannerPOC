@@ -34,6 +34,7 @@
         {
             await JSRuntime.InvokeVoidAsync("canvasInterop.setupCanvas", _canvasReference, cellSize);
             await this.UpdateJSComponents();
+            Console.WriteLine("CANVAS FIRST RENDER!!!");
             await Redraw();
         }
     }

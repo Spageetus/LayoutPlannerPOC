@@ -103,7 +103,11 @@ namespace LayoutPlannerPOC
                     ControlTip.PlaceComponent,
                     ControlTip.RotateComponent
                 ], false);
+        }
 
+        public static void ClearComponents()
+        {
+            _componentsList.Clear();
         }
 
         public static string GetComponentsListAsJSON()
