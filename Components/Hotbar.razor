@@ -1,8 +1,33 @@
-﻿<section id="hotbar">
+﻿<section id="hotbar" @onmouseenter="HandleMouseEnter" @onmouseleave="HandleMouseLeave">
     @ChildContent
 </section>
 
 @code {
+    @using Data
     [Parameter]
     public required RenderFragment ChildContent { get; set; }
+
+    private async Task HandleMouseEnter(MouseEventArgs e)
+    {
+        StateManager.UpdateControlDisplay([
+                ControlTip.ClearFromHotbar
+        ], true);
+        if(StateManager.GetHeldComponent() is not null)
+        {
+            StateManager.UpdateControlDisplay([
+                ControlTip.SaveToHotbar
+            ], true);
+        }
+    }
+
+    private async Task HandleMouseLeave(MouseEventArgs e)
+    {
+        if(StateManager.GetHeldComponent() is not null)
+        {
+            StateManager.UpdateControlDisplay([
+                ControlTip.SaveToHotbar,
+                ControlTip.ClearFromHotbar
+            ], false);
+        }
+    }
 }

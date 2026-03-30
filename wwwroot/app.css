@@ -89,6 +89,7 @@ html, body {
     height: fit-content;
     width: fit-content;
     margin: 16px;
+    pointer-events:none;
 }
 
 /*

@@ -11,7 +11,7 @@
 </section>
 
 <div class="hotbar-container">
-    <ControlTips @ref="controlTipsWindow" />
+    <ControlsDisplay />
     <Hotbar>
         @* Im sure theres a better way to do this *@
         <HotbarButton ButtonId=1 @ref="hotbarButtons[1]" />
@@ -61,7 +61,6 @@
 
     private HotbarButton[] hotbarButtons = new HotbarButton[10];
     private DesignCanvas canvasRef { get; set; }
-    private ControlTips controlTipsWindow { get; set; }
 
 
     protected override Task OnAfterRenderAsync(bool firstRender)
@@ -156,10 +155,6 @@
                 StateManager.setSelectedComponentType(hotbarButtons[0].StoredComponentType);
                 break;
                 #nullable enable
-            case("t"): //TODO: Remove
-                Console.WriteLine("State Changed?: " + StateManager.StateHasChanged);
-                if (!StateManager.CheckForDuplicates()) Console.WriteLine("No duplicate components found :)");
-                break;
         }
     }
 }

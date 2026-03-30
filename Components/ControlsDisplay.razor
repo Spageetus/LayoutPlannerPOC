@@ -1,0 +1,73 @@
+﻿@if(currentControlTips.Count != 0)
+{
+    <div class="control-tip-window">
+        @foreach(var tip in currentControlTips)
+        {
+            <div class="control-tip">
+                <img src=@tip.IconSrc />
+                <label>@tip.Label</label>
+            </div>
+        }
+    </div>
+}
+
+
+
+@code {
+    @using Data
+
+    private List<ControlTip> currentControlTips = new List<ControlTip>();
+
+
+    protected override Task OnInitializedAsync()
+    {
+        // this.currentControlTips.Add(ControlTip.ClearCursor);
+        // this.currentControlTips.Add(ControlTip.PanCamera);
+        // this.currentControlTips = ControlTip.AllTips;
+        StateManager.controlDisplayRef = this;
+        return base.OnInitializedAsync();
+    }
+
+    public void RemoveTip(ControlTip tip)
+    {
+        this.currentControlTips.Remove(tip);
+        this.StateHasChanged();
+    }
+
+    public void AddTip(ControlTip tip)
+    {
+        if (this.currentControlTips.Contains(tip)) return;
+        this.currentControlTips.Add(tip);
+        this.StateHasChanged();
+    }
+
+    public void AddTips(List<ControlTip> tips)
+    {
+        for(int i = 0; i < tips.Count; i++)
+        {
+            this.AddTip(tips[i]);
+        }
+    }
+
+    public void RemoveTips(List<ControlTip> tips)
+    {
+        for(int i = 0; i < tips.Count; i++)
+        {
+            this.RemoveTip(tips[i]);
+        }
+    }
+
+    public void PrintTips()
+    {
+        foreach(ControlTip tip in this.currentControlTips)
+        {
+            Console.WriteLine(tip.Label);
+        }
+    }
+
+    public void ClearTips()
+    {
+        this.currentControlTips.Clear();
+        this.StateHasChanged();
+    }
+}

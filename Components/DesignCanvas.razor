@@ -41,12 +41,39 @@
     private async Task HandleMouseLeaveCanvas(MouseEventArgs e)
     {
         this.mouseOnScreen = false;
+        StateManager.UpdateControlDisplay([
+            ControlTip.PanCamera, 
+            ControlTip.ReturnToCenter,
+            ControlTip.DeleteComponent,
+        ], false);
+        if(StateManager.GetHeldComponent() is not null)
+        {
+            StateManager.UpdateControlDisplay([
+                ControlTip.ClearCursor,
+                ControlTip.RotateComponent,
+                ControlTip.PlaceComponent
+            ], false);
+        }
+        StateHasChanged();
         await this.Redraw();
     }
 
     private async Task HandleMouseEnterCanvas(MouseEventArgs e)
     {
         await _canvasReference.FocusAsync();
+        StateManager.UpdateControlDisplay([
+            ControlTip.PanCamera,
+            ControlTip.ReturnToCenter,
+            ControlTip.DeleteComponent,
+        ], true);
+        if (StateManager.GetHeldComponent() is not null)
+        {
+            StateManager.UpdateControlDisplay([
+                ControlTip.ClearCursor,
+                ControlTip.RotateComponent,
+                ControlTip.PlaceComponent
+            ], true);
+        }
         this.mouseOnScreen = true;
         await this.Redraw();
     }

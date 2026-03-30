@@ -1,0 +1,28 @@
+﻿.control-tip-window {
+    margin: 0;
+    padding: 0;
+    border-top: 4px solid black;
+    border-right: 4px solid black;
+    padding: 8px;
+    padding-right: 5%;
+    margin-left: 4px;
+    background: gray;
+    width: fit-content;
+}
+
+img{
+    width: 24px;
+}
+
+.control-tip{
+    display: flex;
+    flex-direction: row;
+    --align-content: center;
+    --justify-content: center;
+    gap: 4px;
+    color: black;
+}
+
+label{
+    align-self: center;
+}

@@ -1,4 +1,5 @@
-﻿using LayoutPlannerPOC.Data;
+﻿using LayoutPlannerPOC.Components;
+using LayoutPlannerPOC.Data;
 using Microsoft.AspNetCore.Components;
 using SQLitePCL;
 using System;
@@ -34,6 +35,19 @@ namespace LayoutPlannerPOC
         public static bool StateHasChanged { get { Console.WriteLine(_changedStates);  return _changedStates != 0; } }
         //TODO: use the _changedStates byte to store if/what has changed in the StateManager (ex: components have changed, held component has changed, etc).
         //More accurately, _changedStates tracks which values have been altered, but never retrieved
+
+
+        //this is just how im doing it rn. will refactor later
+        public static ControlsDisplay? controlDisplayRef;
+
+        public static void UpdateControlDisplay(List<ControlTip> tips, bool active)
+        {
+            if (controlDisplayRef == null) return;
+            if(active) { controlDisplayRef.AddTips(tips); }
+            else { controlDisplayRef.RemoveTips(tips); };
+
+
+        }
 
 
         //public accessor for singleton instance
@@ -84,6 +98,11 @@ namespace LayoutPlannerPOC
             StateManager.heldComponent = null;
             //marking held component as being changed
             StateManager._changedStates |= ChangedState.HeldComponent;
+            StateManager.UpdateControlDisplay([
+                    ControlTip.ClearCursor,
+                    ControlTip.PlaceComponent,
+                    ControlTip.RotateComponent
+                ], false);
 
         }
 
